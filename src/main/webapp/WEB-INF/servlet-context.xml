@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+	<!-- 扫描  Controller -->
+	<context:component-scan base-package="com.qihua" name-generator="com.qihua.common.CustomBeanNameGenerator">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	
+	<mvc:annotation-driven/>
+
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1" />
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json"/>
+                                <entry key="xml" value="application/xml"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+                	<property name="prettyPrint" value="false" />
+                </bean>
+                <bean class="org.springframework.web.servlet.view.xml.MarshallingView" >  
+					<property name="marshaller">
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+							<property name="autodetectAnnotations" value="true"/>
+						</bean>  
+					</property>
+				</bean>  
+            </list>
+        </property>
+    </bean>
+
+	<!-- com.qihua.console.SystemAspect -->
+	<aop:aspectj-autoproxy />
+
+	<!-- index page -->
+	<mvc:view-controller path="/" view-name="redirect:/" />
+
+	<!--
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:default-servlet-handler/>
+	 -->
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="52428800" /> <!-- 1024 * 1024 * 50 -->
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+    
+    <bean id="handlerExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.qihua.console.security.HttpRequest408Exception">redirect:/console</prop>
+                <prop key="com.qihua.console.security.HttpRequest401Exception">/console/error/401</prop>
+                <prop key="com.qihua.front.security.HttpRequest408Exception">redirect:/member/login-register</prop>
+                <prop key="com.qihua.front.security.HttpRequest401Exception">/front/error/401</prop>
+            </props>
+        </property>
+    </bean>
+    
+	<!-- bean name="requestDataValueProcessor" class="com.qihua.front.security.CSRFRequestDataValueProcessor" / -->
+    
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/console/**" />
+            <mvc:exclude-mapping path="/console" />
+            <mvc:exclude-mapping path="/console/" />
+            <mvc:exclude-mapping path="/resources/**" />
+            <bean class="com.qihua.console.security.SecurityInterceptor">
+                <property name="excludedUrls">
+                    <list>
+                        <value>/console/login</value>
+                        <value>/console/logout</value>
+                    </list>
+                </property>
+                <property name="globalUrls">
+                    <list>
+                        <value>/console/dashboard</value>
+                        <value>/console/user/profile</value>
+                        <value>/console/user/save-profile</value>
+                        <value>/console/user/password-matches</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/console/**" />
+            <mvc:exclude-mapping path="/" />
+			<mvc:exclude-mapping path="/resources/**" />
+            <bean class="com.qihua.front.security.SecurityInterceptor">
+                <property name="excludedUrls">
+                    <list>
+                        <value>/member/login</value>
+                        <value>/member/authorize</value>
+                        <value>/member/register</value>
+                        <value>/member/authenticate</value>
+                        <value>/member/login-register</value>
+                        <value>/member/logout</value>
+                        <value>/member/exists-email</value>
+                        <value>/member/reset</value>
+                        <value>/member/recharge</value>
+                        <value>/gift</value>
+                        <value>/product/?.*</value>
+                        <value>/partner</value>
+                        <value>/club</value>
+                        <value>/merchant</value>
+                        <value>/guide/?.*</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+</beans>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="warn" monitorInterval="1800">
+	<properties>
+		<property name="LOG_HOME">/Users/Kevin/Documents/Deploy/Tomcat/webapps/Qihua/logs</property>
+		<property name="SERVER_NAME">localhost</property>
+		<property name="LAYOUT_PATTERN">%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%t][%C.%M:%line] - %msg%n</property>
+		<property name="manual">
+		<![CDATA[ 
+		http://logging.apache.org/log4j/2.x/manual/appenders.html#RollingFileAppender
+		http://logging.apache.org/log4j/2.x/manual/configuration.html#Loggers
+		http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+		]]>
+		</property>
+	</properties>
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LAYOUT_PATTERN}" />
+		</Console>
+		<RollingRandomAccessFile name="Production" fileName="${LOG_HOME}/${SERVER_NAME}.log"
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/$${date:yyyy-MM-dd}/%d{yyyy-MM-dd_HH-mm-ss}-%i.log.gz" ignoreExceptions="false">
+			<PatternLayout pattern="${LAYOUT_PATTERN}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+		</RollingRandomAccessFile>
+	</appenders>
+	<loggers>
+		<Logger name="druid.sql.DataSource" level="warn" additivity="false">
+			<appender-ref ref="Console" />
+		</Logger>
+		<Logger name="druid.sql.Connection" level="warn" additivity="false">
+			<appender-ref ref="Console" />
+		</Logger>
+		<Logger name="druid.sql.Statement" level="warn" additivity="false">
+			<appender-ref ref="Console" />
+		</Logger>
+		<Logger name="druid.sql.ResultSet" level="warn" additivity="false">
+			<appender-ref ref="Console" />
+		</Logger>
+		<Logger name="com.qihua" level="warn" additivity="false">
+			<appender-ref ref="Console" />
+			<appender-ref ref="Production" />
+		</Logger>
+		<root level="warn">
+			<appender-ref ref="Console" />
+			<appender-ref ref="Production" />
+		</root>
+	</loggers>
+</configuration>
