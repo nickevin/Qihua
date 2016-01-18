@@ -29,17 +29,17 @@
 * cd database
 * cat dump.sql
 
-##### Tomcat Session Manager
-Modify context.xml
+##### ~~Tomcat Session Manager~~
+~~Modify context.xml~~
 ```xml
 <Valve className="com.radiadesign.catalina.session.RedisSessionHandlerValve" />
 <Manager className="com.radiadesign.catalina.session.RedisSessionManager" host="192.168.199.183" port="6379" database="0" maxInactiveInterval="60" />
 
 ```
-Put these jar into the %TOMCAT%\lib folder
-* tomcat-redis-session-manager-1.2-tomcat-7.jar
-* jedis-2.7.3.jar
-* commons-pool2-2.0.jar
+~~Put these jar into the %TOMCAT%\lib folder~~
+* ~~tomcat-redis-session-manager-1.2-tomcat-7.jar~~
+* ~~jedis-2.7.3.jar~~
+* ~~commons-pool2-2.0.jar~~
 
 ##### nginx  
 * cd nginx
