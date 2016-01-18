@@ -78,7 +78,6 @@ public class OrderController {
       orderService.confirm(session, order);
 
       WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER, session);
-      WebUtils.setSessionAttribute(request, "__changed__", "");
     } catch (IllegalValueException e) {
       return new JSONResponseBody(false, e.getMessage());
     } catch (Exception e) {

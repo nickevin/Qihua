@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  * @see
  */
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"score", "address", "email", "mobile", "memberName", "password"})
 public class Member extends BaseEntity {
 
   @PrimaryKey

@@ -30,7 +30,7 @@ public class MemberDAO extends GenericDAO<Member, String> {
   }
 
   public Member selectByMobile(String mobile) {
-    String sql = "SELECT tb.mobile FROM t_member tb WHERE tb.mobile = ? ";
+    String sql = "SELECT tb.member_id, tb.email, tb.member_name, tb.mobile FROM t_member tb WHERE tb.mobile = ? ";
 
     Object[] params = new Object[] {mobile};
     int[] types = new int[] {Types.VARCHAR};
@@ -39,7 +39,7 @@ public class MemberDAO extends GenericDAO<Member, String> {
   }
 
   public Member selectByEmail(String email) {
-    String sql = "SELECT tb.member_id, tb.email, tb.member_name FROM t_member tb WHERE tb.email = ? ";
+    String sql = "SELECT tb.member_id, tb.email, tb.member_name, tb.mobile FROM t_member tb WHERE tb.email = ? ";
 
     Object[] params = new Object[] {email};
     int[] types = new int[] {Types.VARCHAR};
@@ -48,7 +48,7 @@ public class MemberDAO extends GenericDAO<Member, String> {
   }
 
   public Member selectByMemberName(String memberName) {
-    String sql = "SELECT tb.member_id, tb.member_name FROM t_member tb WHERE tb.member_name = ? ";
+    String sql = "SELECT tb.member_id, tb.email, tb.member_name, tb.mobile FROM t_member tb WHERE tb.member_name = ? ";
 
     Object[] params = new Object[] {memberName};
     int[] types = new int[] {Types.VARCHAR};
@@ -56,7 +56,7 @@ public class MemberDAO extends GenericDAO<Member, String> {
     return jdbcTemplate.queryForObject(sql, params, types, new CustomBeanPropertyRowMapper<Member>(Member.class));
   }
 
-  public void updatePassword(Member member) {
+  public Member updatePassword(Member member) {
     StringBuilder sql = new StringBuilder();
     sql.append("UPDATE t_member SET password = ?, update_time = ? WHERE member_id = ?");
 
@@ -65,9 +65,11 @@ public class MemberDAO extends GenericDAO<Member, String> {
     int[] types = new int[] {Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR};
 
     jdbcTemplate.update(sql.toString(), params, types);
+
+    return select(member.getMemberId());
   }
 
-  public void updateScore(Member member) {
+  public Member updateScore(Member member) {
     StringBuilder sql = new StringBuilder();
     sql.append("UPDATE t_member SET score = ?, update_time = ? WHERE member_id = ?");
 
@@ -75,6 +77,9 @@ public class MemberDAO extends GenericDAO<Member, String> {
     int[] types = new int[] {Types.INTEGER, Types.TIMESTAMP, Types.VARCHAR};
 
     jdbcTemplate.update(sql.toString(), params, types);
+
+    return select(member.getMemberId());
+
   }
 
 }

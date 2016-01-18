@@ -13,6 +13,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -38,17 +39,34 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Value("#{configProperties['redis.pool.max-wait']}")
   private int maxWait;
 
+
   @Override
   @Bean
   public KeyGenerator keyGenerator() {
     return new KeyGenerator() {
-      public Object generate(Object o, Method method, Object... objects) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(o.getClass().getName());
-        sb.append(method.getName());
+      public Object generate(Object object, Method method, Object... objects) {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(object.getClass().getName() + ".");
+        sb.append(method.getName() + ":");
         for (Object obj : objects) {
           sb.append(obj.toString());
         }
+
+        return sb.toString();
+      }
+    };
+  }
+
+  @Bean
+  public KeyGenerator keyGeneratorWithoutMenthod() {
+    return new KeyGenerator() {
+      public Object generate(Object object, Method method, Object... objects) {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append(object.getClass().getName() + ":");
+        for (Object obj : objects) {
+          sb.append(obj.toString());
+        }
+
         return sb.toString();
       }
     };
@@ -84,6 +102,9 @@ public class CacheConfig extends CachingConfigurerSupport {
   public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory cf) {
     RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
     redisTemplate.setConnectionFactory(cf);
+    redisTemplate.setKeySerializer(new StringRedisSerializer());
+    redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
     return redisTemplate;
   }
 

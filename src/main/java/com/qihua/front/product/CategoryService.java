@@ -3,7 +3,6 @@ package com.qihua.front.product;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ public class CategoryService {
   @Autowired
   private CategoryDAO categoryDAO;
 
-  @Cacheable(value = "category_findOne")
+  // @Cacheable(value = "category_findOne")
   public Category find(Long categoryId) throws NullObjectException {
     try {
       return categoryDAO.selectCategory(categoryId);
@@ -24,7 +23,7 @@ public class CategoryService {
     }
   }
 
-  @Cacheable(value = "category_findCategories")
+  // @Cacheable(value = "category_findCategories")
   public List<Category> findCategories() {
     List<Category> categoryList = categoryDAO.selectCategory();
     for (Category item : categoryList) {
@@ -34,17 +33,17 @@ public class CategoryService {
     return categoryList;
   }
 
-  @Cacheable(value = "category_findSubcategoryBySubcatgeoryId")
+  // @Cacheable(value = "category_findSubcategoryBySubcatgeoryId")
   public Category findSubcategory(Long subcatgeoryId) {
     return categoryDAO.selectSubcategory(subcatgeoryId);
   }
 
-  @Cacheable(value = "category_findSubcategories")
+  // @Cacheable(value = "category_findSubcategories")
   public List<Category> findSubcategories() {
     return categoryDAO.select();
   }
 
-  @Cacheable(value = "category_findSubcategoriesByCatgeoryId")
+  // @Cacheable(value = "category_findSubcategoriesByCatgeoryId")
   public List<Category> findSubcategories(Long catgeoryId) {
     return categoryDAO.selectSubcategoryByCatgeoryId(catgeoryId);
   }
