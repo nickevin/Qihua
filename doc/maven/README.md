@@ -2,7 +2,7 @@
 * mvn -version
 * mvn help:system
 * mvn archetype:generate -DarchetypeCatalog=internal
-* mvn eclipse:eclipse
+* mvn eclipse:eclipse, mvn eclipse:eclipse -DdownloadSources=true
 * mvn install
 * mvn site
 * mvn javadoc:javadoc
