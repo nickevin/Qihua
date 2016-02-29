@@ -1,28 +1,30 @@
 # Qihua [![Build Status](https://travis-ci.org/nickevin/Qihua.svg?branch=master)](https://travis-ci.org/nickevin/Qihua)
 
 ### System Architecture
-* Servelt Container: Tomcat 7.*
+* Servelt Container: Tomcat ~~7.* ~~ 8.*~~
 * Cache Layer: Redis
 * Web Server: nginx
 * Database Server: MySQL 5.6 
 
-### Installation and Getting Started
+### Installation
 * git clone https://github.com/nickevin/Qihua.git
+
+### Development
 * mvn eclipse:eclipse
 * java -jar lombok.jar
-* import to eclipse
+* import project into eclipse
 * just right click on the project and click [Configure] and you should see “Convert to Maven Project” option
 
 ### Dependency Libraries
 * [Spring Framework](https://github.com/spring-projects/spring-framework)
-*	[Lombok](https://github.com/rzwitserloot/lombok)
-*	[Apache Commons](http://commons.apache.org/)
-*	[Apache Log4j 2](http://logging.apache.org/log4j/2.x/)
-*	[Joda-Time](http://www.joda.org/joda-time/)
-*	[Jasypt](http://www.jasypt.org/)
-*	[Druid](https://github.com/alibaba/druid)
+* [Lombok](https://github.com/rzwitserloot/lombok)
+* [Apache Commons](http://commons.apache.org/)
+* [Apache Log4j 2](http://logging.apache.org/log4j/2.x/)
+* [Joda-Time](http://www.joda.org/joda-time/)
+* [Jasypt](http://www.jasypt.org/)
+* [Druid](https://github.com/alibaba/druid)
 * [Jedis](https://github.com/xetorthio/jedis)
-*	[Tomcat Session Manager](https://github.com/jcoleman/tomcat-redis-session-manager)
+* ~~[Tomcat Session Manager](https://github.com/jcoleman/tomcat-redis-session-manager)~~ [Spring Session](http://docs.spring.io/spring-session/docs/current/reference/html5/)
 
 ### Configuartion
 ##### MySQL Dump
