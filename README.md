@@ -1,7 +1,7 @@
 # Qihua [![Build Status](https://travis-ci.org/nickevin/Qihua.svg?branch=master)](https://travis-ci.org/nickevin/Qihua)
 
 ### System Architecture
-* Servelt Container: Tomcat ~~7.* ~~ 8.*~~
+* Servelt Container: Tomcat 8.*
 * Cache Layer: Redis
 * Web Server: nginx
 * Database Server: MySQL 5.6 
