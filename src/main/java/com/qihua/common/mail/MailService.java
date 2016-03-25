@@ -29,7 +29,6 @@ import freemarker.template.TemplateException;
  * @see
  */
 @Service
-@Async
 public class MailService {
 
   private static final String DEFAULT_ENCODING = "utf-8";
