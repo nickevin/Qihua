@@ -14,7 +14,7 @@ import com.qihua.console.product.ProductService;
 import com.qihua.util.DateUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml", "/spring/applicationContext-test-assembly.xml"})
+@ContextConfiguration({"/spring/test.xml", "/spring/test-assembly.xml"})
 public class TestProduct extends AbstractTransactionalJUnit4SpringContextTests {
 
   @Autowired

@@ -5,6 +5,7 @@
 * mvn eclipse:eclipse, mvn eclipse:eclipse -DdownloadSources=true
 * mvn install
 * mvn site
+* mvn dependency:sources
 * mvn javadoc:javadoc
 * mvn -X package
 

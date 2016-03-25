@@ -1,12 +1,9 @@
 package com.qihua.config;
 
-import java.lang.reflect.Method;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -24,6 +21,9 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Value("#{configProperties['redis.host']}")
   private String hostName;
 
+  @Value("#{configProperties['redis.password']}")
+  private String password;
+
   @Value("#{configProperties['redis.port']}")
   private int port;
 
@@ -39,59 +39,44 @@ public class CacheConfig extends CachingConfigurerSupport {
   @Value("#{configProperties['redis.pool.max-wait']}")
   private int maxWait;
 
-
-  @Override
-  @Bean
-  public KeyGenerator keyGenerator() {
-    return new KeyGenerator() {
-      public Object generate(Object object, Method method, Object... objects) {
-        StringBuilder sb = new StringBuilder(50);
-        sb.append(object.getClass().getName() + ".");
-        sb.append(method.getName() + ":");
-        for (Object obj : objects) {
-          sb.append(obj.toString());
-        }
-
-        return sb.toString();
-      }
-    };
-  }
-
-  @Bean
-  public KeyGenerator keyGeneratorWithoutMenthod() {
-    return new KeyGenerator() {
-      public Object generate(Object object, Method method, Object... objects) {
-        StringBuilder sb = new StringBuilder(50);
-        sb.append(object.getClass().getName() + ":");
-        for (Object obj : objects) {
-          sb.append(obj.toString());
-        }
-
-        return sb.toString();
-      }
-    };
-  }
+  // @Override
+  // @Bean
+  // public KeyGenerator keyGenerator() {
+  // return new KeyGenerator() {
+  // @Override
+  // public Object generate(final Object object, final Method method, final Object... objects) {
+  // StringBuilder sb = new StringBuilder(50);
+  // sb.append(object.getClass().getName() + ".");
+  // sb.append(method.getName() + ":");
+  // for (Object obj : objects) {
+  // sb.append(obj.toString());
+  // }
+  //
+  // return sb.toString();
+  // }
+  // };
+  // }
 
   @Bean
   public JedisConnectionFactory redisConnectionFactory() {
     JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory();
     redisConnectionFactory.setHostName(hostName);
+    redisConnectionFactory.setPassword(password);
     redisConnectionFactory.setPort(port);
     redisConnectionFactory.setTimeout(timeout);
 
     JedisPoolConfig poolConfig = new JedisPoolConfig();
-    poolConfig.setBlockWhenExhausted(true);
-    poolConfig.setJmxEnabled(false);
-    poolConfig.setLifo(true);
     poolConfig.setMaxIdle(maxIdle);
     poolConfig.setMaxTotal(maxActive);
-    poolConfig.setMaxWaitMillis(maxWait);
-    poolConfig.setMinEvictableIdleTimeMillis(60 * 60 * 10);
-    poolConfig.setMinIdle(0);
-    poolConfig.setNumTestsPerEvictionRun(3);
-    poolConfig.setSoftMinEvictableIdleTimeMillis(1800000);
-    poolConfig.setTestOnBorrow(true);
-    poolConfig.setTestWhileIdle(true);
+    poolConfig.setMaxWaitMillis(maxWait); // 获取连接时的最大等待毫秒数
+    poolConfig.setTestOnBorrow(true); // 获取连接的时候检查有效性
+    poolConfig.setTestWhileIdle(false);// 空闲时检查有效性
+    poolConfig.setTimeBetweenEvictionRunsMillis(-1l);// 逐出扫描的时间间隔（毫秒）
+    poolConfig.setNumTestsPerEvictionRun(3); // 每次连接断开检查时，断开的最大数目
+    poolConfig.setMinEvictableIdleTimeMillis(1000L * 300L);// 断开连接的最小空闲时间（毫秒）
+    poolConfig.setBlockWhenExhausted(true);// 连接耗尽时是否阻塞, false：报异常，ture：阻塞直到超时
+    poolConfig.setJmxEnabled(false);
+    poolConfig.setLifo(true);
 
     redisConnectionFactory.setPoolConfig(poolConfig);
 
@@ -99,19 +84,20 @@ public class CacheConfig extends CachingConfigurerSupport {
   }
 
   @Bean
-  public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory cf) {
-    RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
-    redisTemplate.setConnectionFactory(cf);
+  public RedisTemplate<String, Object> redisTemplate(final RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
+    redisTemplate.setConnectionFactory(connectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
     redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
 
     return redisTemplate;
   }
 
   @Bean
-  public CacheManager cacheManager(RedisTemplate redisTemplate) {
+  public CacheManager cacheManager(final RedisTemplate<String, Object> redisTemplate) {
     RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
-    cacheManager.setDefaultExpiration(3000);
+    cacheManager.setDefaultExpiration(60 * 10);
 
     return cacheManager;
   }

@@ -9,6 +9,5 @@
 	<div class="text-center">
 		<img class="lazy" src="<%=basePath%>/resources/images/product/placeholder.gif" data-original="<%=basePath%>/resources/images/copyright-1.jpg">
 		<img class="lazy" src="<%=basePath%>/resources/images/product/placeholder.gif" data-original="<%=basePath%>/resources/images/copyright-2.jpg">
-		<a href="http://webscan.360.cn/index/checkwebsite/url/qihuacloud.duapp.com"><img border="0" src="http://img.webscan.360.cn/status/pai/hash/9af39ad3a80737467d6053e4188bbc02"/></a>
 	</div>
 </div>

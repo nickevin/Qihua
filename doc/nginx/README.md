@@ -18,3 +18,4 @@
 
 ##### Reference
 * [http://www.ruanyifeng.com/blog/2011/09/curl.html](http://www.ruanyifeng.com/blog/2011/09/curl.html)
+* [nginx 整合 Tomcat](http://cxshun.iteye.com/blog/1535188)

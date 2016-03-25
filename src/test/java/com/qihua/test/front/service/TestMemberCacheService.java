@@ -21,7 +21,7 @@ import com.qihua.front.member.Member;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml"})
+@ContextConfiguration({"/spring/test.xml"})
 public class TestMemberCacheService extends AbstractJUnit4SpringContextTests {
 
   @Autowired
@@ -53,32 +53,32 @@ public class TestMemberCacheService extends AbstractJUnit4SpringContextTests {
 
   @Test
   public void test4() throws Exception {
+    Member m1 = new Member();
+    m1.setMemberId("0001");
+    System.out.println("1: " + service.findByMemberId(m1) + "\n");
+
+    m1.setMemberId("0002");
+    System.out.println("2: " + service.findByMemberId(m1) + "\n");
+
     Member m3 = new Member();
     m3.setMemberId("0001");
     m3.setEmail("root2@163.com");
-    System.out.println(service.findByEmail(m3));
+    System.out.println("3: " + service.findByEmail(m3) + "\n");
 
     Member m2 = new Member();
     m2.setMemberId("0001");
     m2.setEmail("root@163.com");
-    System.out.println(service.findByEmail(m2));
-
-    Member m1 = new Member();
-    m1.setMemberId("0001");
-    System.out.println(service.findByMemberId(m1));
-
-    m1.setMemberId("0002");
-    System.out.println(service.findByMemberId(m1));
+    System.out.println("4: " + service.findByEmail(m2) + "\n");
 
     Member m4 = new Member();
     m4.setMemberId("0001");
     m4.setMemberName("root");
-    System.out.println(service.findByMemberName(m4));
+    System.out.println("5: " + service.findByMemberName(m4) + "\n");
 
     Member m5 = new Member();
     m5.setMemberId("0001");
     m5.setMemberName("root2");
-    System.out.println(service.findByMemberName(m5));
+    System.out.println("6: " + service.findByMemberName(m5) + "\n");
   }
 
 }

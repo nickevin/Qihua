@@ -14,7 +14,7 @@ import com.qihua.console.user.User;
 import com.qihua.console.user.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml", "/spring/applicationContext-test-assembly.xml"})
+@ContextConfiguration({"/spring/test.xml", "/spring/test-assembly.xml"})
 public class TestUser extends AbstractTransactionalJUnit4SpringContextTests {
 
   @Autowired

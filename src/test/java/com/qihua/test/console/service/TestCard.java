@@ -15,7 +15,7 @@ import com.qihua.console.card.CardService;
 import com.qihua.util.IdUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml", "/spring/applicationContext-test-assembly.xml"})
+@ContextConfiguration({"/spring/test.xml", "/spring/test-assembly.xml"})
 public class TestCard extends AbstractTransactionalJUnit4SpringContextTests {
 
   @Autowired

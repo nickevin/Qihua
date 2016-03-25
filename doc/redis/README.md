@@ -1,8 +1,9 @@
 ##### Commands
-* redis-server
-* redis-cli
-* info
+* redis-server /usr/local/etc/redis.conf
+* redis-cli -h 192.168.199.183 -p 6379
+* info memory
 * shutdown
+* redis-benchmark -h 127.0.0.1 -p 6379 -c 1000 -n 10
 
 ##### API
 * flushdb: remove all from current db

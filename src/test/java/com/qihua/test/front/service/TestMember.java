@@ -14,7 +14,7 @@ import com.qihua.front.member.MemberService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml", "/spring/applicationContext-test-assembly.xml"})
+@ContextConfiguration({"/spring/test.xml", "/spring/test-assembly.xml"})
 public class TestMember extends AbstractTransactionalJUnit4SpringContextTests {
 
   @Autowired

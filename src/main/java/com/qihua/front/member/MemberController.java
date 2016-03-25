@@ -3,6 +3,7 @@ package com.qihua.front.member;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -66,7 +67,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/authorize", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody login(HttpServletRequest request, Member member) {
+  public @ResponseBody JSONResponseBody login(final HttpServletRequest request, final Member member) {
     try {
       Member existed = memberService.login(member);
       if (existed == null) {
@@ -84,7 +85,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody authenticate(HttpServletRequest request, Member member) {
+  public @ResponseBody JSONResponseBody authenticate(final HttpServletRequest request, final Member member) {
     try {
       Member newMember = memberService.register(member);
 
@@ -101,9 +102,9 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/logout")
-  public String logout(HttpServletRequest request) {
+  public String logout(final HttpSession session) {
     try {
-      request.getSession().invalidate();
+      session.invalidate();
     } catch (Exception e) {
       log.error(ExceptionUtils.getStackTraceAsString(e));
     }
@@ -112,17 +113,17 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/profile")
-  public String profile(HttpServletRequest request) throws Exception {
+  public String profile(final HttpServletRequest request) throws Exception {
     return "/front/member/profile";
   }
 
   @RequestMapping(value = "/password")
-  public String password(HttpServletRequest request) throws Exception {
+  public String password(final HttpServletRequest request) throws Exception {
     return "/front/member/password";
   }
 
   @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody save(HttpServletRequest request, Member member) {
+  public @ResponseBody JSONResponseBody save(final HttpServletRequest request, final Member member) {
     try {
       memberService.save(member);
 
@@ -141,7 +142,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/exists-name", method = RequestMethod.GET)
-  public @ResponseBody boolean exists(HttpServletRequest request, String memberName) {
+  public @ResponseBody boolean exists(final HttpServletRequest request, String memberName) {
     try {
       memberName = new String(memberName.getBytes("ISO-8859-1"), "UTF-8");
 
@@ -159,7 +160,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/exists-email", method = RequestMethod.GET)
-  public @ResponseBody boolean existsEmail(HttpServletRequest request, String email) {
+  public @ResponseBody boolean existsEmail(final HttpServletRequest request, final String email) {
     try {
       return memberService.existsEmail(email) != null;
     } catch (Exception e) {
@@ -170,7 +171,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/password-matches")
-  public @ResponseBody boolean passwordMatches(HttpServletRequest request, String oldPassword) {
+  public @ResponseBody boolean passwordMatches(final HttpServletRequest request, final String oldPassword) {
     try {
       Member session = (Member) WebUtils.getSessionAttribute(request, Constants.SESSION_MEMBER);
 
@@ -187,7 +188,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/order")
-  public String list(HttpServletRequest request) {
+  public String list(final HttpServletRequest request) {
     try {
       Member session = (Member) WebUtils.getSessionAttribute(request, Constants.SESSION_MEMBER);
 
@@ -200,7 +201,7 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/reset", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody reset(final HttpServletRequest request, String email) {
+  public @ResponseBody JSONResponseBody reset(final HttpServletRequest request, final String email) {
     try {
       final Member member = memberService.existsEmail(email);
       if (member != null) {

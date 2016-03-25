@@ -29,52 +29,52 @@ import freemarker.template.TemplateException;
  * @see
  */
 @Service
-// @Component
+@Async
 public class MailService {
 
-    private static final String DEFAULT_ENCODING = "utf-8";
+  private static final String DEFAULT_ENCODING = "utf-8";
 
-    @Autowired
-    private JavaMailSender mailSender;
+  @Autowired
+  private JavaMailSender mailSender;
 
-    @Autowired
-    private Configuration freemarkerConfiguration;
+  @Autowired
+  private Configuration freemarkerConfiguration;
 
-    private Template template;
+  private Template template;
 
-    /**
-     * 密码重置邮件。
-     *
-     */
-    @Async
-    public void sendRestMail(Map<String, Object> map) throws Exception {
-        MimeMessage msg = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(msg, true, DEFAULT_ENCODING);
+  /**
+   * 密码重置邮件。
+   *
+   */
+  @Async
+  public void sendRestMail(final Map<String, Object> map) throws Exception {
+    MimeMessage msg = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(msg, true, DEFAULT_ENCODING);
 
-        helper.setFrom(Constants.DEFAULT_MAIL);
-        helper.setTo((String) map.get("recipient"));
-        msg.setSubject((String) map.get("subject"));
+    helper.setFrom(Constants.DEFAULT_MAIL);
+    helper.setTo((String) map.get("recipient"));
+    msg.setSubject((String) map.get("subject"));
 
-        String content = generateContent((String) map.get("templateName"), map);
-        helper.setText(content, true);
+    String content = generateContent((String) map.get("templateName"), map);
+    helper.setText(content, true);
 
-        mailSender.send(msg);
+    mailSender.send(msg);
+  }
+
+  private String generateContent(final String templateName, final Map<String, Object> map) throws MessagingException {
+    try {
+      template = freemarkerConfiguration.getTemplate(templateName, DEFAULT_ENCODING);
+      Map<String, Object> context = new HashMap<String, Object>();
+      for (Map.Entry<String, Object> entry : map.entrySet()) {
+        context.put(entry.getKey(), entry.getValue());
+      }
+
+      return FreeMarkerTemplateUtils.processTemplateIntoString(template, context);
+    } catch (IOException e) {
+      throw new MessagingException("FreeMarker模板不存在", e);
+    } catch (TemplateException e) {
+      throw new MessagingException("FreeMarker处理失败", e);
     }
-
-    private String generateContent(String templateName, Map<String, Object> map) throws MessagingException {
-        try {
-            template = freemarkerConfiguration.getTemplate(templateName, DEFAULT_ENCODING);
-            Map<String, Object> context = new HashMap<String, Object>();
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                context.put(entry.getKey(), entry.getValue());
-            }
-
-            return FreeMarkerTemplateUtils.processTemplateIntoString(template, context);
-        } catch (IOException e) {
-            throw new MessagingException("FreeMarker模板不存在", e);
-        } catch (TemplateException e) {
-            throw new MessagingException("FreeMarker处理失败", e);
-        }
-    }
+  }
 
 }

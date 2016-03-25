@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.qihua.common.Constants;
-import com.qihua.front.product.CategoryService;
 import com.qihua.front.product.ProductService;
 import com.qihua.util.ExceptionUtils;
 
@@ -26,14 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/gift")
 public class GiftController {
 
-  @Autowired
-  private CategoryService categoryService;
+  // @Autowired
+  // private ProductCategoryService categoryService;
 
   @Autowired
   private ProductService productService;
 
   @RequestMapping
-  public String index(HttpServletRequest request) throws Exception {
+  public String index(final HttpServletRequest request) throws Exception {
     try {
       // request.setAttribute("categoryList", categoryService.findCategories());
       request.setAttribute("recommendList", productService.findRecommendImg());

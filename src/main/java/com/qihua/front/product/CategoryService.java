@@ -14,8 +14,7 @@ public class CategoryService {
   @Autowired
   private CategoryDAO categoryDAO;
 
-  // @Cacheable(value = "category_findOne")
-  public Category find(Long categoryId) throws NullObjectException {
+  public Category find(final Long categoryId) throws NullObjectException {
     try {
       return categoryDAO.selectCategory(categoryId);
     } catch (EmptyResultDataAccessException e) {
@@ -23,7 +22,6 @@ public class CategoryService {
     }
   }
 
-  // @Cacheable(value = "category_findCategories")
   public List<Category> findCategories() {
     List<Category> categoryList = categoryDAO.selectCategory();
     for (Category item : categoryList) {
@@ -33,18 +31,15 @@ public class CategoryService {
     return categoryList;
   }
 
-  // @Cacheable(value = "category_findSubcategoryBySubcatgeoryId")
-  public Category findSubcategory(Long subcatgeoryId) {
+  public Category findSubcategory(final Long subcatgeoryId) {
     return categoryDAO.selectSubcategory(subcatgeoryId);
   }
 
-  // @Cacheable(value = "category_findSubcategories")
   public List<Category> findSubcategories() {
     return categoryDAO.select();
   }
 
-  // @Cacheable(value = "category_findSubcategoriesByCatgeoryId")
-  public List<Category> findSubcategories(Long catgeoryId) {
+  public List<Category> findSubcategories(final Long catgeoryId) {
     return categoryDAO.selectSubcategoryByCatgeoryId(catgeoryId);
   }
 

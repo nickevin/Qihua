@@ -1,5 +1,7 @@
 package com.qihua.console;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see
  */
 @Slf4j
-public class QueryParameter {
+public class QueryParameter implements Serializable {
 
   private User sessionUser;
   private String status = "1";
@@ -41,7 +43,7 @@ public class QueryParameter {
     return sessionUser;
   }
 
-  public void setSessionUser(User sessionUser) {
+  public void setSessionUser(final User sessionUser) {
     this.sessionUser = sessionUser;
   }
 
@@ -49,7 +51,7 @@ public class QueryParameter {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(final String status) {
     this.status = status;
   }
 
@@ -57,7 +59,7 @@ public class QueryParameter {
     return pageNo;
   }
 
-  public void setPageNo(int pageNo) {
+  public void setPageNo(final int pageNo) {
     this.pageNo = pageNo;
   }
 
@@ -65,7 +67,7 @@ public class QueryParameter {
     return pageSize;
   }
 
-  public void setPageSize(int pageSize) {
+  public void setPageSize(final int pageSize) {
     this.pageSize = pageSize;
   }
 

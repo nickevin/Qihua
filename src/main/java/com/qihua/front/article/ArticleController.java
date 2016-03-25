@@ -20,14 +20,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("/")
 public class ArticleController {
-
 
   @Autowired
   private ArticleService articleService;
 
-  @RequestMapping(value = "club")
+  @RequestMapping(value = "/club")
   public String club(HttpServletRequest request) throws Exception {
     Article content = articleService.findByArticleType(Constants.ARTICLE_TYPE_CLUB);
 
@@ -36,7 +34,7 @@ public class ArticleController {
     return "/front/club";
   }
 
-  @RequestMapping(value = "partner")
+  @RequestMapping(value = "/partner")
   public String partner(HttpServletRequest request) throws Exception {
     Article content = articleService.findByArticleType(Constants.ARTICLE_TYPE_PARTNER);
 
@@ -45,7 +43,7 @@ public class ArticleController {
     return "/front/partner";
   }
 
-  @RequestMapping(value = "merchant")
+  @RequestMapping(value = "/merchant")
   public String merchant(HttpServletRequest request) throws Exception {
     Article content = articleService.findByArticleType(Constants.ARTICLE_TYPE_MERCHANT);
 

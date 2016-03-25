@@ -38,7 +38,7 @@ public class ProductController {
   private ProductService productService;
 
   @RequestMapping
-  public String list(HttpServletRequest request, ProductQueryParameter queryParam) {
+  public String list(final HttpServletRequest request, final ProductQueryParameter queryParam) {
     try {
       request.setAttribute("queryParam", queryParam);
       request.setAttribute("categoryList", categoryService.findCategories());
@@ -53,13 +53,12 @@ public class ProductController {
   }
 
   @RequestMapping(value = "search-json")
-  public @ResponseBody JSONResponseBody search(HttpServletRequest request, ProductQueryParameter queryParam) {
+  public @ResponseBody JSONResponseBody search(final HttpServletRequest request,
+      final ProductQueryParameter queryParam) {
     List<Product> list = Collections.emptyList();
 
     try {
       list = productService.find(queryParam);
-
-      System.out.println("ProductController.search()" + list);
     } catch (Exception e) {
       log.error(ExceptionUtils.getStackTraceAsString(e));
 
@@ -70,7 +69,7 @@ public class ProductController {
   }
 
   @RequestMapping(value = "/display")
-  public String display(HttpServletRequest request, @RequestParam(required = false) String productId) {
+  public String display(final HttpServletRequest request, @RequestParam(required = false) final String productId) {
     Product item = new Product();
 
     try {
@@ -106,7 +105,7 @@ public class ProductController {
   }
 
   @RequestMapping(value = "/remove", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody remove(HttpServletRequest request, String productId) {
+  public @ResponseBody JSONResponseBody remove(final HttpServletRequest request, final String productId) {
     try {
       productService.remove(productId);
     } catch (Exception e) {
@@ -119,7 +118,8 @@ public class ProductController {
   }
 
   @RequestMapping(value = "/rating", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody rating(HttpServletRequest request, String productId, Integer rate) {
+  public @ResponseBody JSONResponseBody rating(final HttpServletRequest request, final String productId,
+      final Integer rate) {
     try {
       productService.rating(productId, rate);
     } catch (Exception e) {
@@ -132,7 +132,7 @@ public class ProductController {
   }
 
   @RequestMapping(value = "/switchStatus", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody switchStatus(HttpServletRequest request, Product product) {
+  public @ResponseBody JSONResponseBody switchStatus(final HttpServletRequest request, final Product product) {
     try {
       productService.switchStatus(product);
     } catch (Exception e) {

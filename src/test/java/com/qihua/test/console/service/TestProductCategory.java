@@ -13,7 +13,7 @@ import com.qihua.console.product.Category;
 import com.qihua.console.product.CategoryService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/spring/applicationContext-test.xml", "/spring/applicationContext-test-assembly.xml"})
+@ContextConfiguration({"/spring/test.xml", "/spring/test-assembly.xml"})
 public class TestProductCategory extends AbstractTransactionalJUnit4SpringContextTests {
 
   @Autowired

@@ -19,14 +19,42 @@
 
 ##### Homebrew
 * brew search xxx
-* brew info xxx: 主要看具体的信息，比如目前的版本，依赖，安装后注意事项等
+* brew info xxx: 主要看具体的信息，比如**目前的版本，依赖，安装后注意事项**等
 * brew update: 更新 Homebrew 自己，并且使得接下来的两个操作有意义
 * brew outdated: 列出所有安装的软件里可以升级的那些
 * brew upgrade: 升级所有可以升级的软件们
-* brew cleanup: 清理不需要的版本极其安装包缓存
+* brew cleanup: 清理不需要的版本以及安装包缓存
 
-##### Homebrew 推荐流程
+##### Homebrew Workflow
 * brew update: 更新 Homebrew 的信息
-* brew outdated: 看一下哪些软件可以升级
-* brew upgrade xxx: 如果不是所有的都要升级，那就这样升级指定的
-* brew upgrade; brew cleanup: 如果都要升级，直接升级完然后清理干净
+* brew outdated: 查看可以升级的软件包
+* brew upgrade xxx: 更新指定的软件包
+* brew upgrade; brew cleanup: 升级后清理缓存
+
+#### Shell Profile
+* sudo sysctl -w kern.maxfiles=1048600
+* sudo sysctl -w kern.maxfilesperproc=1048576
+* ulimit -S -n 1048576
+* ulimit -n 100000 unlimited
+
+##### Homebrew 软件包
+* nginx
+	* install: /usr/local/Cellar/nginx
+	* conf: /usr/local/etc/nginx/nginx.conf
+	* log: /usr/local/var/log/nginx
+
+* redis
+	* install: /usr/local/Cellar/redis
+	* conf: /usr/local/etc/redis.conf
+	* log: /usr/local/var/log/mongodb	
+
+* mongodb
+	* install: /usr/local/Cellar/mongodb
+	* conf: /usr/local/etc/mongod.conf
+	* log: /usr/local/var/log/mongodb	
+
+##### Jenkins
+* insall: brew install jenkins
+* run: 
+	* cd /usr/local/Cellar/jenkins/VERSION/libexec
+	* java -jar jenkins.war --httpPort=7001

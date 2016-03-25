@@ -25,16 +25,17 @@ public class MemberCacheService {
 
   Set<Member> members = new HashSet<Member>();
 
-  @Caching(put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null")})
-  public Member save(Member member) {
+  @Caching(put = {
+      @CachePut(value = "member", key = "\"Member.memberId:\" + #result.memberId", condition = "#result != null")})
+  public Member save(final Member member) {
     member.setMemberId("0001");
     members.add(member);
 
     return member;
   }
 
-  @Caching(put = {@CachePut(value = "member", key = "#member.memberId")})
-  public Member update(Member member) {
+  @Caching(put = {@CachePut(value = "member", key = "\"Member.memberId:\" + #member.memberId")})
+  public Member update(final Member member) {
     members.remove(member);
 
     members.add(member);
@@ -42,9 +43,10 @@ public class MemberCacheService {
     return member;
   }
 
-  @Caching(evict = {@CacheEvict(value = "member", key = "#member.memberId"),
-      @CacheEvict(value = "member", key = "#member.memberName"), @CacheEvict(value = "member", key = "#member.email")})
-  public Member delete(Member member) {
+  @Caching(evict = {@CacheEvict(value = "member", key = "\"Member.memberId:\" + #member.memberId"),
+      @CacheEvict(value = "member", key = "\"Member.memberId:\" + #member.memberName"),
+      @CacheEvict(value = "member", key = "\"Member.memberId:\" + #member.email")})
+  public Member delete(final Member member) {
     members.remove(member);
 
     return member;
@@ -55,9 +57,12 @@ public class MemberCacheService {
     members.clear();
   }
 
-  @Caching(cacheable = {@Cacheable(value = "member", key = "#member.memberId")},
-      put = {@CachePut(value = "member", key = "#result.memberName", condition = "#result != null"),
-          @CachePut(value = "member", key = "#result.email", condition = "#result != null")})
+  @Caching(cacheable = {@Cacheable(value = "member", key = "\"Member.memberId:\" + #member.memberId")},
+      put = {
+          @CachePut(value = "member", key = "\"Member.memberName:\" + #result.memberName",
+              condition = "#result != null"),
+          @CachePut(value = "member", key = "\"Member.email:\" + #result.email", condition = "#result != null")})
+  // 将 memberName，email 作为 key 加入到缓存，以便于 findByMemberName，findByEmail 可以使用缓存
   public Member findByMemberId(final Member member) {
     System.out.println("cache miss, invoke find by memberId, memberId:" + member.getMemberId());
     for (Member item : members) {
@@ -69,9 +74,10 @@ public class MemberCacheService {
     return null;
   }
 
-  @Caching(cacheable = {@Cacheable(value = "member", key = "#member.memberName")},
-      put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
-          @CachePut(value = "member", key = "#result.email", condition = "#result != null")})
+  @Caching(cacheable = {@Cacheable(value = "member", key = "\"Member.memberName:\" + #member.memberName")},
+      put = {
+          @CachePut(value = "member", key = "\"Member.memberId:\" + #result.memberId", condition = "#result != null"),
+          @CachePut(value = "member", key = "\"Member.email:\" + #result.email", condition = "#result != null")})
   public Member findByMemberName(final Member member) {
     System.out.println("cache miss, invoke find by memberName, memberName: " + member.getMemberName());
     for (Member item : members) {
@@ -83,9 +89,9 @@ public class MemberCacheService {
     return null;
   }
 
-  @Caching(cacheable = {@Cacheable(value = "member", key = "#member.email")},
-      put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
-          @CachePut(value = "member", key = "#result.memberName", condition = "#result != null")})
+  @Caching(cacheable = {@Cacheable(value = "member", key = "\"Member.email:\" + #member.email")}, put = {
+      @CachePut(value = "member", key = "\"Member.memberId:\" + #result.memberId", condition = "#result != null"),
+      @CachePut(value = "member", key = "\"Member.memberName:\" + #result.memberName", condition = "#result != null")})
   public Member findByEmail(final Member member) {
     System.out.println("cache miss, invoke find by email, email: " + member.getEmail());
     for (Member item : members) {
@@ -98,20 +104,21 @@ public class MemberCacheService {
   }
 
 
-  @CacheEvict(value = "user", key = "#user.id",
+  @CacheEvict(value = "user", key = "\"Member.memberId:\" + #user.id",
       condition = "#root.target.canCache() and #root.caches[0].get(#user.id).get().username ne #user.username",
       beforeInvocation = true)
-  public void conditionUpdate(Member member) {
+  public void conditionUpdate(final Member member) {
     members.remove(member);
     members.add(member);
   }
 
 
-  public boolean canEvict(Cache userCache, Long memberId, String memberName) {
+  public boolean canEvict(final Cache userCache, final Long memberId, final String memberName) {
     Member cacheUser = userCache.get(memberId, Member.class);
     if (cacheUser == null) {
       return false;
     }
+
     return !cacheUser.getMemberName().equals(memberName);
   }
 }
