@@ -12,36 +12,36 @@ import com.qihua.exception.NullObjectException;
 @Service
 public class CategoryService {
 
-    @Autowired
-    private CategoryDAO categoryDAO;
+  @Autowired
+  private CategoryRepository categoryRepository;
 
-    public List<Category> find() {
-        return categoryDAO.select();
-    }
+  public List<Category> find() {
+    return categoryRepository.selectAll();
+  }
 
-    public Category find(Long categoryId) throws NullObjectException {
-        try {
-            return categoryDAO.select(categoryId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
+  public Category find(final Long categoryId) throws NullObjectException {
+    try {
+      return categoryRepository.selectOne(categoryId);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
     }
+  }
 
-    public List<Category> findCategories() {
-        return categoryDAO.selectCategory();
-    }
+  public List<Category> findCategories() {
+    return categoryRepository.selectCategory();
+  }
 
-    public List<Category> findSubcategories() {
-        return categoryDAO.select();
-    }
+  public List<Category> findSubcategories() {
+    return categoryRepository.selectAll();
+  }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Category save(Category item) throws Exception {
-        if (item.getCategoryId() == null) {
-            return categoryDAO.insert(item);
-        } else {
-            return categoryDAO.update(item);
-        }
+  @Transactional(rollbackFor = Exception.class)
+  public Category save(final Category item) throws Exception {
+    if (item.getCategoryId() == null) {
+      return categoryRepository.insert(item);
+    } else {
+      return categoryRepository.update(item);
     }
+  }
 
 }

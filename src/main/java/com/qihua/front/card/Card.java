@@ -2,10 +2,10 @@ package com.qihua.front.card;
 
 import java.sql.Timestamp;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.NotNull;
 
 import lombok.Data;
 
@@ -20,8 +20,7 @@ import lombok.Data;
 @Data
 public class Card extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String cardId;
   private Long uploadId;
   @NotNull
@@ -34,7 +33,7 @@ public class Card extends BaseEntity {
 
   public Card() {}
 
-  public Card(String cardNo, String password, long score) {
+  public Card(final String cardNo, final String password, final long score) {
     this.cardNo = cardNo;
     this.password = password;
     this.score = score;

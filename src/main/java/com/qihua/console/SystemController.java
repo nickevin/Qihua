@@ -1,10 +1,13 @@
 package com.qihua.console;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
 import com.qihua.common.Constants;
-import com.qihua.common.JSONResponseBody;
 import com.qihua.console.security.Menu;
 import com.qihua.console.security.SecurityService;
 import com.qihua.console.user.User;
@@ -43,7 +45,7 @@ public class SystemController {
   private SecurityService securityService;
 
   @RequestMapping
-  public String index(HttpServletRequest request) throws Exception {
+  public String index(final HttpServletRequest request) throws Exception {
     if (WebUtils.getSessionAttribute(request, Constants.SESSION_USER) == null) {
       return "/console/index";
     }
@@ -57,7 +59,8 @@ public class SystemController {
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody login(HttpServletRequest request, User user) {
+  public @ResponseBody ResponseEntity<HashMap<String, Object>> login(final HttpServletRequest request,
+      final User user) {
     try {
       User existed = userService.login(user);
 
@@ -69,19 +72,33 @@ public class SystemController {
       // 设置 CKFinder，否则无法访问上传文件夹。
       WebUtils.setSessionAttribute(request, Constants.SESSION_USER_ROLE, existed.getRole().getRoleId() + "");
 
-    } catch (NullObjectException e) {
-      return new JSONResponseBody(true, e.getMessage());
+    } catch (final NullObjectException e) {
+      return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+        {
+          put("result", false);
+          put("data", e.getMessage());
+        }
+      }, HttpStatus.OK);
     } catch (Exception e) {
       log.error(ExceptionUtils.getStackTraceAsString(e));
 
-      return new JSONResponseBody(false, "系统异常，请联系管理员。");
+      return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+        {
+          put("result", false);
+          put("data", "系统异常，请联系管理员。");
+        }
+      }, HttpStatus.OK);
     }
 
-    return new JSONResponseBody();
+    return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+      {
+        put("result", true);
+      }
+    }, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/logout")
-  public String logout(HttpServletRequest request) {
+  public String logout(final HttpServletRequest request) {
     try {
       request.getSession().invalidate();
     } catch (Exception e) {

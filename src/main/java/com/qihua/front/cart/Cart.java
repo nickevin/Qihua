@@ -1,9 +1,9 @@
 package com.qihua.front.cart;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
 import com.qihua.common.Constants;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.PrimaryKey;
 
 import lombok.Data;
 
@@ -18,8 +18,7 @@ import lombok.Data;
 @Data
 public class Cart extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String cartId;
   private String memberId;
   private String productId;

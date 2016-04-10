@@ -14,7 +14,7 @@ import com.qihua.console.product.ProductImg;
 public class HomeService {
 
     @Autowired
-    private HomeDAO homeDAO;
+    private HomeRepository homeRepository;
 
     public String uploadImg(FileMeta meta, String postion) throws Exception {
         FileCopyUtils.copy(meta.getBytes(),
@@ -27,15 +27,15 @@ public class HomeService {
         img.setProductId(meta.getId());
         img.setPostion(postion);
 
-        return homeDAO.insertImage(img);
+        return homeRepository.insertImage(img);
     }
 
     public List<ProductImg> findImgList(String position) {
-        return homeDAO.selectImg(position);
+        return homeRepository.selectImg(position);
     }
 
     public void removeImg(String imgName) {
-        homeDAO.deleteImg(imgName);
+        homeRepository.deleteImg(imgName);
     }
 
 }

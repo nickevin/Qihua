@@ -11,93 +11,93 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qihua.common.Constants;
-import com.qihua.console.security.SecurityDAO;
+import com.qihua.console.security.SecurityRepository;
 import com.qihua.exception.MultipleObjectException;
 import com.qihua.exception.NullObjectException;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserDAO userDAO;
+  @Autowired
+  private UserRepository userRepository;
 
-    @Autowired
-    private SecurityDAO securityDAO;
+  @Autowired
+  private SecurityRepository securityRepository;
 
-    public List<User> find() {
-        return userDAO.select();
+  public List<User> find() {
+    return userRepository.selectAll();
+  }
+
+  public User find(final String userId) throws NullObjectException {
+    try {
+      return userRepository.selectOne(userId);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
     }
+  }
 
-    public User find(String userId) throws NullObjectException {
-        try {
-            return userDAO.select(userId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
+  public User login(final User user) throws Exception {
+    try {
+      return userRepository.selectCredential(user);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
     }
+  }
 
-    public User login(User user) throws Exception {
-        try {
-            return userDAO.selectCredential(user);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
+  @Transactional(rollbackFor = Exception.class)
+  public User save(final User item) throws Exception {
+    if (StringUtils.isEmpty(item.getUserId())) {
+      if (StringUtils.isEmpty(item.getPassword())) {
+        item.setPassword(DigestUtils.md5Hex(Constants.DEFAULT_PASSWORD));
+      }
+
+      User newUser = userRepository.insert(item);
+      securityRepository.insertUserRole(newUser);
+
+      return newUser;
+    } else {
+      User existed = userRepository.update(item);
+      securityRepository.updateUserRole(existed);
+
+      return existed;
     }
+  }
 
-    @Transactional(rollbackFor = Exception.class)
-    public User save(User item) throws Exception {
-        if (StringUtils.isEmpty(item.getUserId())) {
-            if (StringUtils.isEmpty(item.getPassword())) {
-                item.setPassword(DigestUtils.md5Hex(Constants.DEFAULT_PASSWORD));
-            }
+  @Transactional(rollbackFor = Exception.class)
+  public void saveProfile(final User user) throws Exception {
+    userRepository.update(user);
+  }
 
-            User newUser = userDAO.insert(item);
-            securityDAO.insertUserRole(newUser);
-
-            return newUser;
-        } else {
-            User existed = userDAO.update(item);
-            securityDAO.updateUserRole(existed);
-
-            return existed;
-        }
+  public boolean passwordMatches(final User user) throws Exception {
+    try {
+      return userRepository.selectCredential(user) != null;
+    } catch (EmptyResultDataAccessException e) {
+      return false;
     }
+  }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void saveProfile(User user) throws Exception {
-        userDAO.update(user);
+  public User findByUsername(final String username) throws Exception {
+    try {
+      return userRepository.selectByUsername(username);
+    } catch (EmptyResultDataAccessException e) {
+      return null;
+    } catch (IncorrectResultSizeDataAccessException e) {
+      throw new MultipleObjectException();
     }
+  }
 
-    public boolean passwordMatches(User user) throws Exception {
-        try {
-            return userDAO.selectCredential(user) != null;
-        } catch (EmptyResultDataAccessException e) {
-            return false;
-        }
+  public boolean existsUsername(final String username) throws Exception {
+    try {
+      return userRepository.selectByUsername(username) == null;
+    } catch (EmptyResultDataAccessException e) {
+      return false;
+    } catch (IncorrectResultSizeDataAccessException e) {
+      throw new MultipleObjectException();
     }
+  }
 
-    public User findByUsername(String username) throws Exception {
-        try {
-            return userDAO.selectByUsername(username);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new MultipleObjectException();
-        }
-    }
-
-    public boolean existsUsername(String username) throws Exception {
-        try {
-            return userDAO.selectByUsername(username) == null;
-        } catch (EmptyResultDataAccessException e) {
-            return false;
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new MultipleObjectException();
-        }
-    }
-
-    public List<User> find(UserQueryParameter queryParam) {
-        return userDAO.select(queryParam);
-    }
+  public List<User> find(final UserQueryParameter queryParam) {
+    return userRepository.select(queryParam);
+  }
 
 }

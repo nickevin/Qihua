@@ -2,7 +2,7 @@
 
 <%@include file="/WEB-INF/pages/console/include/import.jsp"%>
 
-<%@page import="com.qihua.common.PageModel"%>
+<%@page import="com.qihua.common.repository.PageModel"%>
 <%@page import="com.qihua.console.card.Card"%>
 <%@page import="com.qihua.console.card.CardQueryParameter"%>
 

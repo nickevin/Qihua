@@ -25,22 +25,6 @@
 		</RollingRandomAccessFile>
 	</appenders>
 	<loggers>
-		<Logger name="druid.sql.DataSource" level="warn" additivity="false">
-			<appender-ref ref="Console" />
-		</Logger>
-		<Logger name="druid.sql.Connection" level="warn" additivity="false">
-			<appender-ref ref="Console" />
-		</Logger>
-		<Logger name="druid.sql.Statement" level="warn" additivity="false">
-			<appender-ref ref="Console" />
-		</Logger>
-		<Logger name="druid.sql.ResultSet" level="warn" additivity="false">
-			<appender-ref ref="Console" />
-		</Logger>
-		<Logger name="com.qihua" level="warn" additivity="false">
-			<appender-ref ref="Console" />
-			<appender-ref ref="Production" />
-		</Logger>
 		<root level="warn">
 			<appender-ref ref="Console" />
 			<appender-ref ref="Production" />

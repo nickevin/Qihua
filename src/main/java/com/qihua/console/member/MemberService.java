@@ -12,31 +12,31 @@ import com.qihua.exception.NullObjectException;
 @Service
 public class MemberService {
 
-    @Autowired
-    private MemberDAO memberDAO;
+  @Autowired
+  private MemberRepository memberRepository;
 
-    public List<Member> find() {
-        return memberDAO.select();
+  public List<Member> find() {
+    return memberRepository.selectAll();
+  }
+
+  public Member find(final String memberId) throws NullObjectException {
+    try {
+      return memberRepository.selectOne(memberId);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public Member save(final Member item) throws Exception {
+    if (item.getMemberId() == null) {
+      return memberRepository.insert(item);
     }
 
-    public Member find(String memberId) throws NullObjectException {
-        try {
-            return memberDAO.select(memberId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
-    }
+    return memberRepository.update(item);
+  }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Member save(Member item) throws Exception {
-        if (item.getMemberId() == null) {
-            return memberDAO.insert(item);
-        }
-
-        return memberDAO.update(item);
-    }
-
-    public List<Member> find(MemberQueryParameter queryParam) {
-        return memberDAO.select(queryParam);
-    }
+  public List<Member> find(final MemberQueryParameter queryParam) {
+    return memberRepository.select(queryParam);
+  }
 }

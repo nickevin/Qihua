@@ -1,8 +1,9 @@
 package com.qihua.console.article;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.NotNull;
 
 import lombok.Data;
 
@@ -17,7 +18,7 @@ import lombok.Data;
 @Data
 public class Article extends BaseEntity {
 
-  @PrimaryKey
+  @Id
   private Long articleId;
   @NotNull
   private int articleType;

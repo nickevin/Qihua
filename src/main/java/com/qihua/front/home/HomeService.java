@@ -12,14 +12,14 @@ import com.qihua.front.product.ProductImg;
 public class HomeService {
 
     @Autowired
-    private HomeDAO homeDAO;
+    private HomeRepository homeRepository;
 
     public List<ProductImg> findCenterImgList() {
-        return homeDAO.selectImg(Constants.HOME_IMG_POSISION_CENTER);
+        return homeRepository.selectImg(Constants.HOME_IMG_POSISION_CENTER);
     }
 
     public List<ProductImg> findBottomImgList() {
-        return homeDAO.selectImg(Constants.HOME_IMG_POSISION_BOTTOM);
+        return homeRepository.selectImg(Constants.HOME_IMG_POSISION_BOTTOM);
     }
 
 }

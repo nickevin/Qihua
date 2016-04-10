@@ -8,6 +8,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -67,21 +69,37 @@ public class MemberController {
   }
 
   @RequestMapping(value = "/authorize", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody login(final HttpServletRequest request, final Member member) {
+  public @ResponseBody ResponseEntity<HashMap<String, Object>> login(final HttpServletRequest request,
+      final Member member) {
     try {
       Member existed = memberService.login(member);
       if (existed == null) {
-        return new JSONResponseBody(false, "手机号码或电子邮箱和密码不匹配，请重新确认。");
+        return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+          {
+            put("result", false);
+            put("data", "手机号码或电子邮箱和密码不匹配，请重新确认。");
+          }
+        }, HttpStatus.OK);
       }
 
       WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER, existed);
     } catch (Exception e) {
       log.error(ExceptionUtils.getStackTraceAsString(e));
 
-      return new JSONResponseBody(false, "系统异常，请联系管理员。");
+      return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+        {
+          put("result", false);
+          put("data", "系统异常，请联系管理员。");
+        }
+      }, HttpStatus.OK);
     }
 
-    return new JSONResponseBody("登录成功。");
+    return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+      {
+        put("result", true);
+        put("data", "登录成功。");
+      }
+    }, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/authenticate", method = RequestMethod.POST)

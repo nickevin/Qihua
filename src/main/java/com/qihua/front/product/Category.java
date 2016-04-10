@@ -2,8 +2,9 @@ package com.qihua.front.product;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.PrimaryKey;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,13 +21,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(exclude = {"subcategories"})
 public class Category extends BaseEntity {
 
-  @PrimaryKey
+  @Id
   private Long categoryId;
   private String categoryName = "";
   private Long subcategoryId;
   private String subcategoryName = "";
   private List<Category> subcategories;
-
-
 
 }

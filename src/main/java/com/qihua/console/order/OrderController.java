@@ -1,15 +1,18 @@
 package com.qihua.console.order;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.qihua.common.JSONResponseBody;
 import com.qihua.util.ExceptionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +35,7 @@ public class OrderController {
   private OrderService orderService;
 
   @RequestMapping
-  public String search(HttpServletRequest request, OrderQueryParameter queryParam) {
+  public String search(final HttpServletRequest request, final OrderQueryParameter queryParam) {
     try {
       request.setAttribute("queryParam", queryParam);
       request.setAttribute("pageModel", orderService.search(queryParam));
@@ -46,7 +49,7 @@ public class OrderController {
   }
 
   @RequestMapping(value = "/display")
-  public String display(HttpServletRequest request, @RequestParam(required = false) String orderId) {
+  public String display(final HttpServletRequest request, @RequestParam(required = false) final String orderId) {
     Order order = new Order();
 
     try {
@@ -67,16 +70,28 @@ public class OrderController {
   }
 
   @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public @ResponseBody JSONResponseBody save(Order order) {
+  public @ResponseBody ResponseEntity<HashMap<String, Object>> save(final Order order) {
+    final Order newOrder;
+
     try {
-      order = orderService.save(order);
-    } catch (Exception e) {
+      newOrder = orderService.save(order);
+    } catch (final Exception e) {
       e.printStackTrace();
 
-      return new JSONResponseBody(false, e.getMessage());
+      return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+        {
+          put("result", false);
+          put("data", e.getMessage());
+        }
+      }, HttpStatus.OK);
     }
 
-    return new JSONResponseBody(true, order.getOrderId());
+    return new ResponseEntity<HashMap<String, Object>>(new HashMap<String, Object>() {
+      {
+        put("result", true);
+        put("data", newOrder.getOrderId());
+      }
+    }, HttpStatus.OK);
   }
 
 }

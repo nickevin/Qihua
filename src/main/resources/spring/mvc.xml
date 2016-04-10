@@ -9,14 +9,17 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
 
-  <context:component-scan base-package="com.qihua" name-generator="com.qihua.common.CustomBeanNameGenerator">
+  <context:component-scan base-package="com.qihua" name-generator="com.qihua.common.GenericBeanNameGenerator">
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+    <context:exclude-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect" />
   </context:component-scan>
 
   <mvc:annotation-driven />
-
-  <!-- enable async -->
-  <task:annotation-driven />
   
+  <!-- enable async: @Component -->
+  <task:annotation-driven />
+
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1" />
     <property name="contentNegotiationManager">
@@ -48,9 +51,6 @@
       </list>
     </property>
   </bean>
-
-  <!-- com.qihua.console.SystemAspect -->
-  <aop:aspectj-autoproxy />
 
   <!-- index page -->
   <mvc:view-controller path="/" view-name="redirect:/" />

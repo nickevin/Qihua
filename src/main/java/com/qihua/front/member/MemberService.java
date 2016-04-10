@@ -16,42 +16,42 @@ import com.qihua.exception.MultipleObjectException;
 public class MemberService {
 
   @Autowired
-  private MemberDAO memberDAO;
+  private MemberRepository memberRepository;
 
   public List<Member> find() {
-    return memberDAO.select();
+    return memberRepository.selectAll();
   }
 
   @Caching(cacheable = {@Cacheable(value = "member", key = "#memberId")},
       put = {@CachePut(value = "member", key = "#result.memberName", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.email", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.mobile", condition = "#result != null")})
-  public Member find(String memberId) throws Exception {
+  public Member find(final String memberId) throws Exception {
     System.out.println("find: " + memberId);
     try {
-      return memberDAO.select(memberId);
+      return memberRepository.selectOne(memberId);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
   }
 
   @Caching(put = {@CachePut(value = "member", key = "#item.memberId")})
-  public Member save(Member item) throws Exception {
-    return memberDAO.update(item);
+  public Member save(final Member item) throws Exception {
+    return memberRepository.update(item);
   }
 
   @Caching(put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null")})
-  public Member register(Member item) throws Exception {
+  public Member register(final Member item) throws Exception {
     if (findByMobile(item.getMobile()) == null && findByEmail(item.getEmail()) == null) {
-      return memberDAO.insert(item);
+      return memberRepository.insert(item);
     }
 
     throw new MultipleObjectException();
   }
 
-  public Member login(Member item) throws Exception {
+  public Member login(final Member item) throws Exception {
     try {
-      return memberDAO.selectCredential(item);
+      return memberRepository.selectCredential(item);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
@@ -61,10 +61,10 @@ public class MemberService {
       put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.memberName", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.email", condition = "#result != null")})
-  public Member findByMobile(String mobile) throws Exception {
+  public Member findByMobile(final String mobile) throws Exception {
     System.out.println("findByMobile: " + mobile);
     try {
-      return memberDAO.selectByMobile(mobile);
+      return memberRepository.selectByMobile(mobile);
     } catch (EmptyResultDataAccessException e) {
       return null;
     } catch (IncorrectResultSizeDataAccessException e) {
@@ -76,10 +76,10 @@ public class MemberService {
       put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.memberName", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.mobile", condition = "#result != null")})
-  public Member findByEmail(String email) throws Exception {
+  public Member findByEmail(final String email) throws Exception {
     System.out.println("findByEmail: " + email);
     try {
-      return memberDAO.selectByEmail(email);
+      return memberRepository.selectByEmail(email);
     } catch (EmptyResultDataAccessException e) {
       return null;
     } catch (IncorrectResultSizeDataAccessException e) {
@@ -91,10 +91,10 @@ public class MemberService {
       put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.email", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.mobile", condition = "#result != null")})
-  public Member existsName(String memberName) throws Exception {
+  public Member existsName(final String memberName) throws Exception {
     System.out.println("existsName: " + memberName);
     try {
-      return memberDAO.selectByMemberName(memberName);
+      return memberRepository.selectByMemberName(memberName);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
@@ -104,31 +104,31 @@ public class MemberService {
       put = {@CachePut(value = "member", key = "#result.memberId", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.memberName", condition = "#result != null"),
           @CachePut(value = "member", key = "#result.mobile", condition = "#result != null")})
-  public Member existsEmail(String email) {
+  public Member existsEmail(final String email) {
     System.out.println("existsEmail: " + email);
     try {
-      return memberDAO.selectByEmail(email);
+      return memberRepository.selectByEmail(email);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
   }
 
-  public boolean passwordMatches(Member member) {
+  public boolean passwordMatches(final Member member) {
     try {
-      return memberDAO.selectCredential(member) != null;
+      return memberRepository.selectCredential(member) != null;
     } catch (EmptyResultDataAccessException e) {
       return false;
     }
   }
 
   @Caching(put = {@CachePut(value = "member", key = "#member.memberId")})
-  public Member updatePassword(Member member) {
-    return memberDAO.updatePassword(member);
+  public Member updatePassword(final Member member) {
+    return memberRepository.updatePassword(member);
   }
 
   @Caching(put = {@CachePut(value = "member", key = "#member.memberId")})
-  public Member updateScore(Member member) {
-    return memberDAO.updateScore(member);
+  public Member updateScore(final Member member) {
+    return memberRepository.updateScore(member);
   }
 
 }

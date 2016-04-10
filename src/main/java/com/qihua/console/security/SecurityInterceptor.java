@@ -27,131 +27,136 @@ import com.qihua.front.security.HttpRequest401Exception;
  */
 public class SecurityInterceptor extends HandlerInterceptorAdapter {
 
-    private List<String> excludedUrls;
-    private List<String> globalUrls;
+  private List<String> excludedUrls;
+  private List<String> globalUrls;
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
-        super.afterCompletion(request, response, handler, ex);
+  @Override
+  public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
+      final Object handler, final Exception ex) throws Exception {
+    super.afterCompletion(request, response, handler, ex);
+  }
+
+  @Override
+  public void afterConcurrentHandlingStarted(final HttpServletRequest request, final HttpServletResponse response,
+      final Object handler) throws Exception {
+    super.afterConcurrentHandlingStarted(request, response, handler);
+  }
+
+  @Override
+  public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+      final ModelAndView modelAndView) throws Exception {
+    super.postHandle(request, response, handler, modelAndView);
+  }
+
+  @Override
+  public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
+      throws Exception {
+    String referer = request.getHeader("referer");
+    if (isAjaxRequest(request) && referer != null
+        && !referer.contains(Constants.CONTEXT_URL) /* TODO www.demo.com, demo.com */) {
+      throw new HttpRequest401Exception();
     }
 
-    @Override
-    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        super.afterConcurrentHandlingStarted(request, response, handler);
+
+
+    String servletPath = request.getServletPath();
+    if (
+
+    isExcludedUrl(servletPath)) {
+      return true;
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-        super.postHandle(request, response, handler, modelAndView);
-    }
+    if (isSessionTimeout(request)) {
+      saveTimeoutSession(request);
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String referer = request.getHeader("referer");
-        if (isAjaxRequest(request) && referer != null && !referer.startsWith(Constants.CONTEXT_URL)) {
-            throw new HttpRequest401Exception();
+      throw new HttpRequest408Exception();
+    } else if (containsGlobalUrls(servletPath)) {
+      return true;
+    } else {
+      @SuppressWarnings("unchecked")
+      List<Menu> sessionMenu = (ArrayList<Menu>) WebUtils.getSessionAttribute(request, Constants.SESSION_MENU);
+      for (Menu item : sessionMenu) {
+        // System.out.println(servletPath + "\t" + item.getMenuUrl());
+        if (StringUtils.isNotEmpty(item.getMenuUrl()) && servletPath.startsWith(item.getMenuUrl())) {
+
+          return true;
         }
 
-        String servletPath = request.getServletPath();
-        if (isExcludedUrl(servletPath)) {
+        for (Menu subItem : item.getItems()) {
+          // System.out.println(servletPath + "\t" + subItem.getMenuUrl());
+          if (!StringUtils.isNotEmpty(subItem.getMenuUrl()) && servletPath.startsWith(subItem.getMenuUrl())) {
+
             return true;
-        }
+          }
 
-        if (isSessionTimeout(request)) {
-            saveTimeoutSession(request);
+          for (Menu subSubItem : subItem.getItems()) {
+            // System.out.println(servletPath + "\t" + subSubItem.getMenuUrl());
+            if (StringUtils.isNotEmpty(subSubItem.getMenuUrl()) && servletPath.startsWith(subSubItem.getMenuUrl())) {
 
-            throw new HttpRequest408Exception();
-        } else if (containsGlobalUrls(servletPath)) {
-            return true;
-        } else {
-            @SuppressWarnings("unchecked")
-            List<Menu> sessionMenu = (ArrayList<Menu>) WebUtils.getSessionAttribute(request, Constants.SESSION_MENU);
-            for (Menu item : sessionMenu) {
-                // System.out.println(servletPath + "\t" + item.getMenuUrl());
-                if (StringUtils.isNotEmpty(item.getMenuUrl()) && servletPath.startsWith(item.getMenuUrl())) {
-
-                    return true;
-                }
-
-                for (Menu subItem : item.getItems()) {
-                    // System.out.println(servletPath + "\t" + subItem.getMenuUrl());
-                    if (!StringUtils.isNotEmpty(subItem.getMenuUrl()) && servletPath.startsWith(subItem.getMenuUrl())) {
-
-                        return true;
-                    }
-
-                    for (Menu subSubItem : subItem.getItems()) {
-                        // System.out.println(servletPath + "\t" + subSubItem.getMenuUrl());
-                        if (StringUtils.isNotEmpty(subSubItem.getMenuUrl())
-                                && servletPath.startsWith(subSubItem.getMenuUrl())) {
-
-                            return true;
-                        }
-                    }
-                }
+              return true;
             }
-
-            throw new HttpRequest401Exception();
+          }
         }
+      }
+
+      throw new HttpRequest401Exception();
+    }
+  }
+
+  private boolean isExcludedUrl(final String servletPath) {
+    for (String url : excludedUrls) {
+      Pattern pattern = Pattern.compile(url);
+      Matcher matcher = pattern.matcher(servletPath);
+      if (matcher.matches()) {
+        return true;
+      }
     }
 
-    private boolean isExcludedUrl(String servletPath) {
-        for (String url : excludedUrls) {
-            Pattern pattern = Pattern.compile(url);
-            Matcher matcher = pattern.matcher(servletPath);
-            if (matcher.matches()) {
-                return true;
-            }
-        }
+    return false;
+  }
 
-        return false;
+  private boolean containsGlobalUrls(final String servletPath) {
+    for (String url : globalUrls) {
+      if (servletPath.startsWith(url) && !url.equals("/")) {
+        return true;
+      }
     }
 
-    private boolean containsGlobalUrls(String servletPath) {
-        for (String url : globalUrls) {
-            if (servletPath.startsWith(url) && !url.equals("/")) {
-                return true;
-            }
-        }
+    return false;
+  }
 
-        return false;
+  private void saveTimeoutSession(final HttpServletRequest request) {
+    StringBuilder params = new StringBuilder("?");
+    Map<String, String[]> parameterMap = request.getParameterMap();
+    for (Map.Entry<String, String[]> item : parameterMap.entrySet()) {
+      params.append(item.getKey() + "=" + item.getValue()[0] + "&");
     }
 
-    private void saveTimeoutSession(HttpServletRequest request) {
-        StringBuilder params = new StringBuilder("?");
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        for (Map.Entry<String, String[]> item : parameterMap.entrySet()) {
-            params.append(item.getKey() + "=" + item.getValue()[0] + "&");
-        }
+    // request.getRequestURI(); // /dxbase/daily/display
+    // request.getRequestURL(); //
+    // http://10.7.210.7:8080/dxbase/daily/display
 
-        // request.getRequestURI(); // /dxbase/daily/display
-        // request.getRequestURL(); //
-        // http://10.7.210.7:8080/dxbase/daily/display
+    WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_URI,
+        request.getRequestURI().substring(request.getContextPath().length()));
+    WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_REQUEST_PARAMETERS, params);
+    WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_REQUEST_METHOD, request.getMethod());
+  }
 
-        WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_URI,
-                request.getRequestURI().substring(request.getContextPath().length()));
-        WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_REQUEST_PARAMETERS, params);
-        WebUtils.setSessionAttribute(request, Constants.SESSION_TIMEOUT_REQUEST_METHOD, request.getMethod());
-    }
+  private boolean isSessionTimeout(final HttpServletRequest request) {
+    return WebUtils.getSessionAttribute(request, Constants.SESSION_USER) == null;
+  }
 
-    private boolean isSessionTimeout(HttpServletRequest request) {
-        return WebUtils.getSessionAttribute(request, Constants.SESSION_USER) == null;
-    }
+  public static boolean isAjaxRequest(final HttpServletRequest request) {
+    String requestedWith = request.getHeader("X-Requested-With");
 
-    public static boolean isAjaxRequest(HttpServletRequest request) {
-        String requestedWith = request.getHeader("X-Requested-With");
+    return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
+  }
 
-        return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
-    }
+  public void setExcludedUrls(final List<String> excludedUrls) {
+    this.excludedUrls = excludedUrls;
+  }
 
-    public void setExcludedUrls(List<String> excludedUrls) {
-        this.excludedUrls = excludedUrls;
-    }
-
-    public void setGlobalUrls(List<String> globalUrls) {
-        this.globalUrls = globalUrls;
-    }
+  public void setGlobalUrls(final List<String> globalUrls) {
+    this.globalUrls = globalUrls;
+  }
 }

@@ -24,85 +24,87 @@ import com.qihua.common.Constants;
  */
 public class SecurityInterceptor extends HandlerInterceptorAdapter {
 
-    private List<String> excludedUrls;
+  private List<String> excludedUrls;
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
-        super.afterCompletion(request, response, handler, ex);
+  @Override
+  public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
+      final Object handler, final Exception ex) throws Exception {
+    super.afterCompletion(request, response, handler, ex);
+  }
+
+  @Override
+  public void afterConcurrentHandlingStarted(final HttpServletRequest request, final HttpServletResponse response,
+      final Object handler) throws Exception {
+    super.afterConcurrentHandlingStarted(request, response, handler);
+  }
+
+  @Override
+  public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+      final ModelAndView modelAndView) throws Exception {
+    super.postHandle(request, response, handler, modelAndView);
+  }
+
+  @Override
+  public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
+      throws Exception {
+    String host = request.getHeader("host");
+    if (isAjaxRequest(request) && host != null
+        && !Constants.CONTEXT_URL.contains(host) /* TODO www.demo.com, demo.com */) {
+      throw new HttpRequest401Exception();
     }
 
-    @Override
-    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        super.afterConcurrentHandlingStarted(request, response, handler);
+    String servletPath = request.getServletPath();
+    if (isExcludedUrl(servletPath)) {
+      return true;
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-        super.postHandle(request, response, handler, modelAndView);
+    if (isSessionTimeout(request)) {
+      saveTimeoutSession(request);
+
+      throw new HttpRequest408Exception();
     }
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String host = request.getHeader("host");
-        if (isAjaxRequest(request) && host != null && !Constants.CONTEXT_URL.contains(host)) {
-            throw new HttpRequest401Exception();
-        }
+    return true;
+  }
 
-        String servletPath = request.getServletPath();
-        if (isExcludedUrl(servletPath)) {
-            return true;
-        }
+  private void saveTimeoutSession(final HttpServletRequest request) {
+    StringBuilder params = new StringBuilder("?");
+    Map<String, String[]> parameterMap = request.getParameterMap();
+    for (Map.Entry<String, String[]> item : parameterMap.entrySet()) {
+      params.append(item.getKey() + "=" + item.getValue()[0] + "&");
+    }
 
-        if (isSessionTimeout(request)) {
-            saveTimeoutSession(request);
+    WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_URI,
+        request.getRequestURI().substring(request.getContextPath().length()));
+    WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_REQUEST_METHOD, request.getMethod());
+    WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_REQUEST_PARAMETERS, params);
 
-            throw new HttpRequest408Exception();
-        }
+  }
 
+  private boolean isExcludedUrl(final String servletPath) {
+    for (String url : excludedUrls) {
+      Pattern pattern = Pattern.compile(url);
+      Matcher matcher = pattern.matcher(servletPath);
+      if (matcher.matches()) {
         return true;
+      }
     }
 
-    private void saveTimeoutSession(HttpServletRequest request) {
-        StringBuilder params = new StringBuilder("?");
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        for (Map.Entry<String, String[]> item : parameterMap.entrySet()) {
-            params.append(item.getKey() + "=" + item.getValue()[0] + "&");
-        }
+    return false;
+  }
 
-        WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_URI,
-                request.getRequestURI().substring(request.getContextPath().length()));
-        WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_REQUEST_METHOD, request.getMethod());
-        WebUtils.setSessionAttribute(request, Constants.SESSION_MEMBER_TIMEOUT_REQUEST_PARAMETERS, params);
+  private boolean isSessionTimeout(final HttpServletRequest request) {
+    return WebUtils.getSessionAttribute(request, Constants.SESSION_MEMBER) == null;
+  }
 
-    }
+  public static boolean isAjaxRequest(final HttpServletRequest request) {
+    String requestedWith = request.getHeader("X-Requested-With");
 
-    private boolean isExcludedUrl(String servletPath) {
-        for (String url : excludedUrls) {
-            Pattern pattern = Pattern.compile(url);
-            Matcher matcher = pattern.matcher(servletPath);
-            if (matcher.matches()) {
-                return true;
-            }
-        }
+    return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
+  }
 
-        return false;
-    }
-
-    private boolean isSessionTimeout(HttpServletRequest request) {
-        return WebUtils.getSessionAttribute(request, Constants.SESSION_MEMBER) == null;
-    }
-
-    public static boolean isAjaxRequest(HttpServletRequest request) {
-        String requestedWith = request.getHeader("X-Requested-With");
-
-        return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
-    }
-
-    public void setExcludedUrls(List<String> excludedUrls) {
-        this.excludedUrls = excludedUrls;
-    }
+  public void setExcludedUrls(final List<String> excludedUrls) {
+    this.excludedUrls = excludedUrls;
+  }
 
 }

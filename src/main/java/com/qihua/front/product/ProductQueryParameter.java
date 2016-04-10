@@ -17,6 +17,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode()
 public class ProductQueryParameter extends QueryParameter {
 
+  private static final long serialVersionUID = -2578572238649090224L;
+
   private String productName = "";
   private String lowScore = "";
   private String highScore = "";

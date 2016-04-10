@@ -1,9 +1,10 @@
 package com.qihua.console.product;
 
+import org.springframework.data.annotation.Id;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.qihua.common.BaseEntity;
 import com.qihua.common.Constants;
-import com.qihua.common.annotation.PrimaryKey;
 
 import lombok.Data;
 
@@ -18,7 +19,7 @@ import lombok.Data;
 @JsonIgnoreProperties({"productId"})
 public class ProductImg extends BaseEntity {
 
-  @PrimaryKey
+  @Id
   private String name;
   private long size;
   private String extension;

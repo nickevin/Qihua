@@ -1,10 +1,10 @@
 package com.qihua.console.user;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.ExcludeColumn;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.ExcludeColumn;
+import com.qihua.common.repository.annotation.NotNull;
 import com.qihua.console.security.Role;
 
 import lombok.Data;
@@ -20,8 +20,7 @@ import lombok.Data;
 @Data
 public class User extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String userId;
   @NotNull
   private String username = "";

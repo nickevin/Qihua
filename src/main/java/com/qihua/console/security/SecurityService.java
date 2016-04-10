@@ -22,10 +22,10 @@ import com.qihua.exception.NullObjectException;
 public class SecurityService {
 
     @Autowired
-    private SecurityDAO securityDAO;
+    private SecurityRepository securityRepository;
 
     public List<Role> findRoles() {
-        List<Role> list = securityDAO.selectRole();
+        List<Role> list = securityRepository.selectRole();
         if (list.isEmpty()) {
             return Collections.emptyList();
         }
@@ -35,14 +35,14 @@ public class SecurityService {
 
     public Role findRoleById(Long id) throws Exception {
         try {
-            return securityDAO.selectRole(id);
+            return securityRepository.selectRole(id);
         } catch (Exception e) {
             throw new NullObjectException();
         }
     }
 
     public List<Menu> findMenus() throws Exception {
-        List<Menu> list = securityDAO.selectMenu();
+        List<Menu> list = securityRepository.selectMenu();
         for (Menu item : list) {
             item.setItems(getChildren(item, list));
         }
@@ -51,7 +51,7 @@ public class SecurityService {
     }
 
     public List<Menu> findMenuByRoleId(Long id) throws Exception {
-        List<Menu> list = securityDAO.selectByRoleId(id);
+        List<Menu> list = securityRepository.selectByRoleId(id);
         for (Menu item : list) {
             item.setItems(getChildren(item, list));
         }
@@ -89,13 +89,13 @@ public class SecurityService {
     @Transactional(rollbackFor = Exception.class)
     public Role save(Role role) throws Exception {
         if (role.getRoleId() == 0) {
-            Role newItem = securityDAO.insertRole(role);
-            securityDAO.insertRoleMenu(newItem, newItem.getItems());
+            Role newItem = securityRepository.insertRole(role);
+            securityRepository.insertRoleMenu(newItem, newItem.getItems());
 
             return newItem;
         } else {
-            Role existed = securityDAO.updateRole(role);
-            securityDAO.updateRoleMenu(role, role.getItems());
+            Role existed = securityRepository.updateRole(role);
+            securityRepository.updateRoleMenu(role, role.getItems());
 
             return existed;
         }

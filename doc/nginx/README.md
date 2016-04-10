@@ -8,7 +8,7 @@
 * mdfind nginx.conf
 * conf-path=/usr/local/etc/nginx/nginx.conf
 * http-log-path=/usr/local/var/log/nginx/access.log
-* error-log-path=/usr/local/var/log/nginx/error.log 
+* error-log-path=/usr/local/var/log/nginx/error.log
 
 ##### 测试是否成功开启 gzip
 * curl -I -H "Accept-Encoding: gzip, deflate" "http://qihua.com/Qihua/gift"

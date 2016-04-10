@@ -2,7 +2,7 @@
 
 <%@include file="/WEB-INF/pages/front/include/import.jsp"%>
 
-<%@page import="com.qihua.common.PageModel"%>
+<%@page import="com.qihua.common.repository.PageModel"%>
 <%@page import="com.qihua.front.product.ProductQueryParameter"%>
 <%@page import="com.qihua.front.product.Product"%>
 <%@page import="com.qihua.front.product.Category"%>

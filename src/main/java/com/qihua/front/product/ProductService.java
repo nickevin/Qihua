@@ -11,14 +11,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qihua.common.PageModel;
+import com.qihua.common.repository.PageModel;
 import com.qihua.exception.NullObjectException;
 
 @Service
 public class ProductService {
 
   @Autowired
-  private ProductDAO productDAO;
+  private ProductRepository productRepository;
 
   // @Autowired
   // private RedisTemplate<String, Object> redisTemplate;
@@ -29,7 +29,7 @@ public class ProductService {
   private final static String CACHE_PREFIX_NAME = "\"Product.";
 
   public List<Product> find() {
-    return productDAO.select();
+    return productRepository.selectAll();
   }
 
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "queryParam:\" + #queryParam")})
@@ -38,10 +38,10 @@ public class ProductService {
     // Product pdct = (Product) ops.get("Product.findFlashSaleProduct");
     // System.out.println(pdct);
 
-    PageModel<Product> pageModel = productDAO.selectByPagination(queryParam);
+    PageModel<Product> pageModel = productRepository.selectByPagination(queryParam);
     List<Product> list = pageModel.getContent();
     for (Product item : list) {
-      item.setImages(productDAO.selectProductImg(item.getProductId()));
+      item.setImages(productRepository.selectProductImg(item.getProductId()));
     }
 
     return pageModel;
@@ -50,9 +50,9 @@ public class ProductService {
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "productId:\" + #productId")})
   public Product find(final String productId) throws NullObjectException {
     try {
-      Product product = productDAO.select(productId);
+      Product product = productRepository.selectOne(productId);
       product.setCategory(categoryService.findSubcategory(product.getCategoryId()));
-      product.setImages(productDAO.selectProductImg(productId));
+      product.setImages(productRepository.selectProductImg(productId));
 
       return product;
     } catch (DataAccessException e) {
@@ -65,17 +65,17 @@ public class ProductService {
   @Transactional(rollbackFor = Exception.class)
   public Product save(final Product product) throws Exception {
     if (StringUtils.isEmpty(product.getProductId())) {
-      return productDAO.insert(product);
+      return productRepository.insert(product);
     }
 
-    return productDAO.update(product);
+    return productRepository.update(product);
   }
 
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "findHottest\"")})
   public List<Product> findHottest() {
-    List<Product> list = productDAO.selectHottest();
+    List<Product> list = productRepository.selectHottest();
     for (Product item : list) {
-      item.setImages(productDAO.selectProductImg(item.getProductId()));
+      item.setImages(productRepository.selectProductImg(item.getProductId()));
     }
 
     return list;
@@ -84,9 +84,9 @@ public class ProductService {
   @Caching(cacheable = {
       @Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "findByScore:\" + #lowScore + \" to \"+ #highScore")})
   public List<Product> findByScore(final int lowScore, final int highScore) {
-    List<Product> list = productDAO.selectByScore(lowScore, highScore);
+    List<Product> list = productRepository.selectByScore(lowScore, highScore);
     for (Product item : list) {
-      item.setImages(productDAO.selectProductImg(item.getProductId()));
+      item.setImages(productRepository.selectProductImg(item.getProductId()));
     }
 
     return list;
@@ -94,7 +94,7 @@ public class ProductService {
 
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "findRecommendImg\"")})
   public List<ProductImg> findRecommendImg() {
-    return productDAO.selectRecommendImg();
+    return productRepository.selectRecommendImg();
   }
 
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "findFlashSaleProduct\"")})
@@ -102,8 +102,8 @@ public class ProductService {
     Product product;
 
     try {
-      product = productDAO.selectFlashSaleProduct();
-      product.setFlashSaleImages(productDAO.selectFlashSaleImg(product.getProductId()));
+      product = productRepository.selectFlashSaleProduct();
+      product.setFlashSaleImages(productRepository.selectFlashSaleImg(product.getProductId()));
     } catch (DataAccessException e) {
       return new Product();
     }
@@ -114,7 +114,7 @@ public class ProductService {
   @Caching(cacheable = {@Cacheable(value = "Product", key = CACHE_PREFIX_NAME + "findImgBlock:\" + #position")})
   public ProductImg findImgBlock(final String position) {
     try {
-      return productDAO.selectImgBlock(position);
+      return productRepository.selectImgBlock(position);
     } catch (DataAccessException e) {
       return new ProductImg();
     }

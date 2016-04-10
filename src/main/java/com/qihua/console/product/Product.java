@@ -4,11 +4,11 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.ExcludeColumn;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.ExcludeColumn;
+import com.qihua.common.repository.annotation.NotNull;
 
 import lombok.Data;
 
@@ -23,8 +23,7 @@ import lombok.Data;
 @Data
 public class Product extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id(name = "product_id")
   private String productId;
   @NotNull
   private String productCode = "";

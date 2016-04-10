@@ -12,18 +12,18 @@ import com.qihua.exception.NullObjectException;
 public class CategoryService {
 
   @Autowired
-  private CategoryDAO categoryDAO;
+  private CategoryRepository categoryRepository;
 
   public Category find(final Long categoryId) throws NullObjectException {
     try {
-      return categoryDAO.selectCategory(categoryId);
+      return categoryRepository.selectCategory(categoryId);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
   }
 
   public List<Category> findCategories() {
-    List<Category> categoryList = categoryDAO.selectCategory();
+    List<Category> categoryList = categoryRepository.selectCategory();
     for (Category item : categoryList) {
       item.setSubcategories(findSubcategories(item.getCategoryId()));
     }
@@ -32,15 +32,15 @@ public class CategoryService {
   }
 
   public Category findSubcategory(final Long subcatgeoryId) {
-    return categoryDAO.selectSubcategory(subcatgeoryId);
+    return categoryRepository.selectSubcategory(subcatgeoryId);
   }
 
   public List<Category> findSubcategories() {
-    return categoryDAO.select();
+    return categoryRepository.selectAll();
   }
 
   public List<Category> findSubcategories(final Long catgeoryId) {
-    return categoryDAO.selectSubcategoryByCatgeoryId(catgeoryId);
+    return categoryRepository.selectSubcategoryByCatgeoryId(catgeoryId);
   }
 
 }

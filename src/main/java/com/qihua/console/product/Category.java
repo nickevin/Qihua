@@ -1,9 +1,10 @@
 package com.qihua.console.product;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
-import com.qihua.common.annotation.Table;
+import com.qihua.common.repository.annotation.NotNull;
+import com.qihua.common.repository.annotation.Table;
 
 import lombok.Data;
 
@@ -19,7 +20,7 @@ import lombok.Data;
 @Table(name = "t_product_category")
 public class Category extends BaseEntity {
 
-  @PrimaryKey
+  @Id
   private Long categoryId;
   @NotNull
   private String categoryName = "";

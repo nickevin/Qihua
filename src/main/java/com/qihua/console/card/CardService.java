@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qihua.common.FileMeta;
-import com.qihua.common.PageModel;
+import com.qihua.common.repository.PageModel;
 import com.qihua.exception.MultipleObjectException;
 import com.qihua.exception.NullObjectException;
 
@@ -30,35 +30,35 @@ public class CardService {
   private static final int BATCH_COMMIT_COUNT = 500;
 
   @Autowired
-  private CardDAO cardDAO;
+  private CardRepository cardRepository;
 
   public List<Card> find() {
-    return cardDAO.select();
+    return cardRepository.selectAll();
   }
 
-  public Card find(String cardId) throws NullObjectException {
+  public Card find(final String cardId) throws NullObjectException {
     try {
-      return cardDAO.select(cardId);
+      return cardRepository.selectOne(cardId);
     } catch (EmptyResultDataAccessException e) {
       throw new NullObjectException();
     }
   }
 
-  public Card save(Card item) throws Exception {
+  public Card save(final Card item) throws Exception {
     if (item.getCardId() == null) {
       if (findByCardNo(item.getCardNo()) == null) {
-        return cardDAO.insert(item);
+        return cardRepository.insert(item);
       }
 
       throw new MultipleObjectException();
     }
 
-    return cardDAO.update(item);
+    return cardRepository.update(item);
   }
 
-  public Card findByCardNo(String cardNo) throws Exception {
+  public Card findByCardNo(final String cardNo) throws Exception {
     try {
-      return cardDAO.selectByCardNo(cardNo);
+      return cardRepository.selectByCardNo(cardNo);
     } catch (EmptyResultDataAccessException e) {
       return null;
     } catch (IncorrectResultSizeDataAccessException e) {
@@ -66,44 +66,44 @@ public class CardService {
     }
   }
 
-  public List<Card> find(CardQueryParameter queryParam) {
-    return cardDAO.select(queryParam);
+  public List<Card> find(final CardQueryParameter queryParam) {
+    return cardRepository.select(queryParam);
   }
 
-  public PageModel<Card> search(CardQueryParameter queryParam) {
-    return cardDAO.selectByPagination(queryParam);
+  public PageModel<Card> search(final CardQueryParameter queryParam) {
+    return cardRepository.selectByPagination(queryParam);
   }
 
-  public void remove(String id) throws Exception {
-    cardDAO.delete(id);
+  public void remove(final String id) throws Exception {
+    cardRepository.delete(id);
   }
 
   public List<CardUpload> findUpload() {
-    return cardDAO.selectUpload();
+    return cardRepository.selectUpload();
   }
 
-  public CardUpload findUpload(Long uploadId) {
-    return cardDAO.selectUpload(uploadId);
+  public CardUpload findUpload(final Long uploadId) {
+    return cardRepository.selectUpload(uploadId);
   }
 
-  public CardUpload saveUpload(CardUpload upload) throws Exception {
-    Long uploadId = cardDAO.insertUpload(upload);
+  public CardUpload saveUpload(final CardUpload upload) throws Exception {
+    Long uploadId = cardRepository.insertUpload(upload);
 
     upload.setUploadId(uploadId);
 
     return upload;
   }
 
-  public void updateUploadTotal(CardUpload upload) throws Exception {
-    cardDAO.updateUpload(upload);
+  public void updateUploadTotal(final CardUpload upload) throws Exception {
+    cardRepository.updateUpload(upload);
   }
 
-  public void batchSave(List<Card> list) throws Exception {
-    cardDAO.batchInsert(list);
+  public void batchSave(final List<Card> list) throws Exception {
+    cardRepository.batchInsert(list);
   }
 
   @Transactional(propagation = Propagation.REQUIRED)
-  public int save(FileMeta meta) throws Exception {
+  public int save(final FileMeta meta) throws Exception {
     CardUpload upload = saveUpload(new CardUpload(0, meta.getName()));
 
     Workbook workbook = null;
@@ -166,17 +166,17 @@ public class CardService {
     return total;
   }
 
-  private Card readRow(Row row) {
+  private Card readRow(final Row row) {
     return new Card(getCellValue(row.getCell(0)), getCellValue(row.getCell(1)),
         Integer.parseInt(getCellValue(row.getCell(2))));
   }
 
-  public static boolean isExcel2003(String filename) {
+  public static boolean isExcel2003(final String filename) {
     return filename.toLowerCase().endsWith("xls");
 
   }
 
-  private String getCellValue(Cell cell) {
+  private String getCellValue(final Cell cell) {
     try {
       return cell.getStringCellValue();
     } catch (Exception e) {

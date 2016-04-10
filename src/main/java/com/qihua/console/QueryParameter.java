@@ -24,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QueryParameter implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+
   private User sessionUser;
   private String status = "1";
   private int pageNo = 1;
@@ -35,7 +37,7 @@ public class QueryParameter implements Serializable {
           ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
       sessionUser = (User) WebUtils.getSessionAttribute(request, Constants.SESSION_USER);
     } catch (Exception e) {
-      log.debug("未登录，无法获取session。");
+      log.debug("未登录，无法获取 session。");
     }
   }
 

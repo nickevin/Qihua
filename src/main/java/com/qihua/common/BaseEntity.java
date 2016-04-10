@@ -15,11 +15,11 @@ import lombok.EqualsAndHashCode;
  *
  */
 @Data
-@EqualsAndHashCode(exclude = {"insertTime", "insertTime"})
+@EqualsAndHashCode(exclude = {"insertTime", "updateTime"})
 public class BaseEntity implements Serializable {
 
   private int status = 1;
-  private Timestamp insertTime = new Timestamp(System.currentTimeMillis()); // 记录时间
-  private Timestamp updateTime = new Timestamp(System.currentTimeMillis());; // 更新时间
+  private Timestamp insertTime;
+  private Timestamp updateTime;
 
 }

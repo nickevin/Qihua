@@ -12,15 +12,15 @@ import com.qihua.exception.NullObjectException;
 public class ArticleService {
 
     @Autowired
-    private ArticleDAO articleDAO;
+    private ArticleRepository articleRepository;
 
     public List<Article> find() {
-        return articleDAO.select();
+        return articleRepository.selectAll();
     }
 
     public Article find(Long id) throws NullObjectException {
         try {
-            return articleDAO.select(id);
+            return articleRepository.selectOne(id);
         } catch (Exception e) {
             throw new NullObjectException();
         }
@@ -29,10 +29,10 @@ public class ArticleService {
     @Transactional(rollbackFor = Exception.class)
     public Article save(Article item) throws Exception {
         if (item.getArticleId() == null) {
-            return articleDAO.insert(item);
+            return articleRepository.insert(item);
         }
 
-        return articleDAO.update(item);
+        return articleRepository.update(item);
     }
 
 }

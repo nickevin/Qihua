@@ -1,9 +1,9 @@
 package com.qihua.front.member;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,11 +17,12 @@ import lombok.EqualsAndHashCode;
  * @see
  */
 @Data
-@EqualsAndHashCode(exclude = {"score", "address", "email", "mobile", "memberName", "password"})
+@EqualsAndHashCode(callSuper = false, exclude = {"score", "address", "email", "mobile", "memberName", "password"})
 public class Member extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  private static final long serialVersionUID = -2680452026485974989L;
+
+  @Id
   private String memberId;
   private String memberName = "";
   @NotNull

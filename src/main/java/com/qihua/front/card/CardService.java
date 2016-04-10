@@ -20,77 +20,77 @@ import com.qihua.front.member.MemberService;
 @Service
 public class CardService {
 
-    @Autowired
-    private CardDAO cardDAO;
+  @Autowired
+  private CardRepository cardRepository;
 
-    @Autowired
-    private MemberService memberService;
+  @Autowired
+  private MemberService memberService;
 
-    public List<MemberCard> findByMember(Member member) throws Exception {
-        return cardDAO.select(member);
+  public List<MemberCard> findByMember(final Member member) throws Exception {
+    return cardRepository.select(member);
+  }
+
+  public Card find(final String cardId) throws NullObjectException {
+    try {
+      return cardRepository.selectOne(cardId);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
+    }
+  }
+
+  public Card find(final String cardNo, final String password) throws NullObjectException {
+    try {
+      return cardRepository.select(cardNo, password);
+    } catch (EmptyResultDataAccessException e) {
+      throw new NullObjectException();
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public Card recharge(final Member member, final Card card) throws Exception {
+    Card existed = find(card.getCardNo(), card.getPassword());
+    if (existed.getStatus() == Constants.CARD_TYPE_DISABLE) {
+      throw new ObjectExistsException();
     }
 
-    public Card find(String cardId) throws NullObjectException {
-        try {
-            return cardDAO.select(cardId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
+    existed.setStatus(Constants.CARD_TYPE_DISABLE);
+    existed.setRechargeTime(new Timestamp(System.currentTimeMillis()));
+
+    insertMemberCard(member, existed);
+
+    member.setScore(member.getScore() + existed.getScore());
+    memberService.updateScore(member);
+
+    return cardRepository.update(existed);
+  }
+
+  private void insertMemberCard(final Member member, final Card card) {
+    MemberCard newItem = new MemberCard();
+    newItem.setMemberId(member.getMemberId());
+    newItem.setMemberName(member.getMemberName());
+    newItem.setCardNo(card.getCardNo());
+    newItem.setCardPassword(card.getPassword());
+    newItem.setScore(card.getScore());
+    newItem.setStatus(card.getStatus());
+
+    cardRepository.insertMemberCard(newItem);
+  }
+
+  public Card findByCardNo(final String cardNo) throws Exception {
+    try {
+      return cardRepository.selectByCardNo(cardNo);
+    } catch (EmptyResultDataAccessException e) {
+      return null;
+    } catch (IncorrectResultSizeDataAccessException e) {
+      throw new MultipleObjectException();
     }
+  }
 
-    public Card find(String cardNo, String password) throws NullObjectException {
-        try {
-            return cardDAO.select(cardNo, password);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullObjectException();
-        }
+  public int calcScore(final Member member) {
+    try {
+      return cardRepository.calcScore(member.getMemberId());
+    } catch (EmptyResultDataAccessException e) {
+      return 0;
     }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Card recharge(Member member, Card card) throws Exception {
-        Card existed = find(card.getCardNo(), card.getPassword());
-        if (existed.getStatus() == Constants.CARD_TYPE_DISABLE) {
-            throw new ObjectExistsException();
-        }
-
-        existed.setStatus(Constants.CARD_TYPE_DISABLE);
-        existed.setRechargeTime(new Timestamp(System.currentTimeMillis()));
-
-        insertMemberCard(member, existed);
-
-        member.setScore(member.getScore() + existed.getScore());
-        memberService.updateScore(member);
-
-        return cardDAO.update(existed);
-    }
-
-    private void insertMemberCard(Member member, Card card) {
-        MemberCard newItem = new MemberCard();
-        newItem.setMemberId(member.getMemberId());
-        newItem.setMemberName(member.getMemberName());
-        newItem.setCardNo(card.getCardNo());
-        newItem.setCardPassword(card.getPassword());
-        newItem.setScore(card.getScore());
-        newItem.setStatus(card.getStatus());
-
-        cardDAO.insertMemberCard(newItem);
-    }
-
-    public Card findByCardNo(String cardNo) throws Exception {
-        try {
-            return cardDAO.selectByCardNo(cardNo);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new MultipleObjectException();
-        }
-    }
-
-    public int calcScore(Member member) {
-        try {
-            return cardDAO.calcScore(member.getMemberId());
-        } catch (EmptyResultDataAccessException e) {
-            return 0;
-        }
-    }
+  }
 }

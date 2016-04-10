@@ -1,9 +1,9 @@
 package com.qihua.console.member;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.NotNull;
 
 import lombok.Data;
 
@@ -18,8 +18,7 @@ import lombok.Data;
 @Data
 public class Member extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String memberId;
   @NotNull
   private String memberName;

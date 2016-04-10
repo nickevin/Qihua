@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import lombok.Data;
 
 /**
@@ -17,17 +19,18 @@ import lombok.Data;
 @Data
 public class Role implements Serializable {
 
+  @Id
   private Long roleId;
   private String roleName = "";
   private List<Menu> items = new ArrayList<Menu>();
 
   public Role() {}
 
-  public Role(Long roleId) {
+  public Role(final Long roleId) {
     this.roleId = roleId;
   }
 
-  public Role(Long roleId, String roleName) {
+  public Role(final Long roleId, final String roleName) {
     this.roleId = roleId;
     this.roleName = roleName;
   }

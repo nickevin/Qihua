@@ -2,9 +2,9 @@ package com.qihua.front.order;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.PrimaryKey;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,13 +19,11 @@ import lombok.ToString;
  * @see
  */
 @Data
-@EqualsAndHashCode(
-    exclude = {"memberId", "recipient", "mobile", "email", "zip", "address", "remarks", "items"})
+@EqualsAndHashCode(exclude = {"memberId", "recipient", "mobile", "email", "zip", "address", "remarks", "items"})
 @ToString(callSuper = true, exclude = {"items"})
 public class Order extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String orderId;
   private String orderNo;
   private String memberId;

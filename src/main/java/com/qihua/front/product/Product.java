@@ -4,9 +4,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.GeneratedValue;
-import com.qihua.common.annotation.PrimaryKey;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,8 +23,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(exclude = {"category", "images", "recommendImages", "flashSaleImages"})
 public class Product extends BaseEntity {
 
-  @PrimaryKey
-  @GeneratedValue(generator = "uuid")
+  @Id
   private String productId;
   private String productCode = "";
   private String productName = "";

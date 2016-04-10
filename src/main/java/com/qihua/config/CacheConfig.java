@@ -1,8 +1,9 @@
 package com.qihua.config;
 
+import java.io.Serializable;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 @EnableCaching
-public class CacheConfig extends CachingConfigurerSupport {
+public class CacheConfig {
 
   @Value("#{configProperties['redis.host']}")
   private String hostName;
@@ -84,18 +85,17 @@ public class CacheConfig extends CachingConfigurerSupport {
   }
 
   @Bean
-  public RedisTemplate<String, Object> redisTemplate(final RedisConnectionFactory connectionFactory) {
-    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
+  public RedisTemplate<String, Serializable> redisTemplate(final RedisConnectionFactory connectionFactory) {
+    RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<String, Serializable>();
     redisTemplate.setConnectionFactory(connectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
     redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-
 
     return redisTemplate;
   }
 
   @Bean
-  public CacheManager cacheManager(final RedisTemplate<String, Object> redisTemplate) {
+  public CacheManager cacheManager(final RedisTemplate<String, Serializable> redisTemplate) {
     RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
     cacheManager.setDefaultExpiration(60 * 10);
 

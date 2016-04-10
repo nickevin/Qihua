@@ -1,8 +1,9 @@
 package com.qihua.console.card;
 
+import org.springframework.data.annotation.Id;
+
 import com.qihua.common.BaseEntity;
-import com.qihua.common.annotation.NotNull;
-import com.qihua.common.annotation.PrimaryKey;
+import com.qihua.common.repository.annotation.NotNull;
 
 /**
  * Class description goes here.
@@ -14,48 +15,47 @@ import com.qihua.common.annotation.PrimaryKey;
  */
 public class CardUpload extends BaseEntity {
 
-    @PrimaryKey
-    private Long uploadId;
-    @NotNull
-    private int total;
-    @NotNull
-    private String filename = "";
+  @Id
+  private Long uploadId;
+  @NotNull
+  private int total;
+  @NotNull
+  private String filename = "";
 
-    public CardUpload() {
-    }
+  public CardUpload() {}
 
-    public CardUpload(int total, String filename) {
-        this.total = total;
-        this.filename = filename;
-    }
+  public CardUpload(final int total, final String filename) {
+    this.total = total;
+    this.filename = filename;
+  }
 
-    public Long getUploadId() {
-        return uploadId;
-    }
+  public Long getUploadId() {
+    return uploadId;
+  }
 
-    public void setUploadId(Long uploadId) {
-        this.uploadId = uploadId;
-    }
+  public void setUploadId(final Long uploadId) {
+    this.uploadId = uploadId;
+  }
 
-    public String getFilename() {
-        return filename;
-    }
+  public String getFilename() {
+    return filename;
+  }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+  public void setFilename(final String filename) {
+    this.filename = filename;
+  }
 
-    public int getTotal() {
-        return total;
-    }
+  public int getTotal() {
+    return total;
+  }
 
-    public void setTotal(int total) {
-        this.total = total;
-    }
+  public void setTotal(final int total) {
+    this.total = total;
+  }
 
-    @Override
-    public String toString() {
-        return "Upload [uploadId=" + uploadId + ", filename=" + filename + ", total=" + total + "]";
-    }
+  @Override
+  public String toString() {
+    return "Upload [uploadId=" + uploadId + ", filename=" + filename + ", total=" + total + "]";
+  }
 
 }
