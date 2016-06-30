@@ -4,10 +4,13 @@
 * mvn archetype:generate -DarchetypeCatalog=internal
 * mvn eclipse:eclipse, mvn eclipse:eclipse -DdownloadSources=true
 * mvn install
-* mvn site
-* mvn dependency:sources
+* mvn site 
+* mvn dependency:tree -Dverbose 依赖树结构
+* mvn dependency:sources 下载项目依赖包的源代码
 * mvn javadoc:javadoc
-* mvn -X package
+* mvn help:effective-pom 查看有效/完整的 POM
+* mvn dependency:resolve 已解决依赖的列表
+* mvn -X package 查看完整的打包过程
 
 ##### Plugins
 ###### yuicompressor-maven-plugin
