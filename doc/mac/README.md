@@ -18,12 +18,14 @@
 * find /Users/Kevin/.m2 -name "*.lastUpdated" -exec rm -r "{}" \;
 
 ##### Homebrew
+* [官方 FAQ](https://github.com/Homebrew/brew/blob/master/docs/FAQ.md)
 * brew search xxx
-* brew info xxx: 主要看具体的信息，比如**目前的版本，依赖，安装后注意事项**等
+* brew info xxx: 主要看具体的信息，比如**版本，安装路径，注意事项**等
 * brew update: 更新 Homebrew 自己，并且使得接下来的两个操作有意义
 * brew outdated: 列出所有安装的软件里可以升级的那些
 * brew upgrade: 升级所有可以升级的软件们
 * brew cleanup: 清理不需要的版本以及安装包缓存
+* brew ls --versions | grep jenkins：查看已安装软件的所有版本
 
 ##### Homebrew Workflow
 * brew update: 更新 Homebrew 的信息
