@@ -15,7 +15,7 @@
 * find / -name "*.java"
 
 ##### 在/Users/Kevin/.m2路径下查找文件名lastUpdated结尾的文件并删除
-* find /Users/Kevin/.m2 -name "*.lastUpdated" -exec rm -r "{}" \;
+* find /Users/Kevin/.m2 -name \*.lastUpdated -exec rm -r {} +
 
 ##### Homebrew
 * [官方 FAQ](https://github.com/Homebrew/brew/blob/master/docs/FAQ.md)
