@@ -32,6 +32,6 @@
 * http://tomcat.apache.org/maven-plugin-2.2/index.html
 
 ##### Misc
-* del D:\\User\\.m2\\repository\\*lastUpdate* /a/s
+* del D:\\User\\.m2\\repository\\\*lastUpdate\* /a/s
 
 
