@@ -33,6 +33,6 @@
 
 ##### Misc
 * windows: del D:\\User\\.m2\\repository\\\*lastUpdate\* /a/s
-* mac: find /Users/xxx/.m2/repository -name "*lastUpdated*"| xargs rm -fr
+* mac: find /Users/xxx/.m2/repository -name "\*lastUpdated\*"| xargs rm -fr
 
 
