@@ -32,6 +32,7 @@
 * http://tomcat.apache.org/maven-plugin-2.2/index.html
 
 ##### Misc
-* del D:\\User\\.m2\\repository\\\*lastUpdate\* /a/s
+* windows: del D:\\User\\.m2\\repository\\\*lastUpdate\* /a/s
+* mac: find /Users/xxx/.m2/repository -name "*lastUpdated*"| xargs rm -fr
 
 
